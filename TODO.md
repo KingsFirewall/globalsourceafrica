@@ -45,7 +45,7 @@ Tick items off as they land. Newest decisions at the bottom of "Done".
 
 ## 📄 Sample verification report
 
-- [ ] **Me · Draft a print-ready redacted sample report** as a page in the repo
+- [x] **Me · Draft a print-ready redacted sample report** — live at `/sample-report/print`
 - [ ] **You · Review it** — check the findings read like real work you'd deliver
 - [ ] **Me · Export to `/public/sample-report.pdf`** and wire up the download
       Today the email gate captures the lead then serves a 404. Worst possible
@@ -85,9 +85,11 @@ is part of the product.
 
 ## 🔍 Inspection
 
-- [ ] **You · Decide** whether to open an account with SGS / Cotecna / Bureau Veritas /
-      Intertek. Not required to book them per job, but a standing account lets you
-      say so on the site and usually improves turnaround and pricing.
+- [ ] **You · Reach out to SGS** (and/or Cotecna, Bureau Veritas, Intertek) to open an
+      account. Decided 2026-09-10: the SGS-COORDINATED badge stays on the home page and
+      you will establish the relationship. Until that is in place the badge is running
+      ahead of the facts — worth closing sooner rather than later, since it is the one
+      claim on the site a buyer could check independently.
 
 ## 🤖 Chat assistant
 
@@ -111,6 +113,8 @@ is part of the product.
 - [x] Documented the setup in `DEPLOYMENT.md`
 - [x] Expanded Ghana-only → five live origins (Nigeria, Ghana, Egypt, Ethiopia, Tanzania)
 - [x] Corrected founder base to Lagos and registration to Nigeria
-- [x] Removed the unsubstantiated "SGS-COORDINATED" badge — we now claim the
-      capability (engaging accredited inspectors per job) rather than a partnership
-      we do not have
+- [x] Reframed the SGS/Cotecna copy: named as the accreditation tier we engage per
+      job, never as partners, and the chat assistant is barred from claiming a
+      partnership. Owner opted to keep the SGS-COORDINATED badge on the home page
+      and to open an account with them — tracked under Inspection above.
+- [x] Drafted the full sample verification report at `/sample-report/print`

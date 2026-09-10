@@ -83,3 +83,34 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* --- Print: used by /sample-report/print to export the PDF deliverable. ---
+   The site chrome lives as direct children of <body> (SiteNav renders a
+   <header>, SiteFooter a <footer>, ChatWidget a launcher <button>), while the
+   report's own letterhead and sign-off are nested inside <main>. Targeting
+   direct children only is what lets us drop the chrome without also dropping
+   the report's header and footer. */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  body > header,
+  body > footer,
+  body > button {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  /* Keep badge borders, the stamp and the risk-rating panel visible on paper —
+     browsers strip backgrounds by default and the report reads as unfinished. */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Corrugation is a decorative gradient; it muddies a printed page. */
+  .gsa-corrugation {
+    background-image: none !important;
+  }
+}
