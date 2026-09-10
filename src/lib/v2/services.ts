@@ -104,10 +104,10 @@ export const SERVICES: Service[] = [
     priceLabel: "from $300 + inspector cost",
     timeline: "Scheduled to your shipment",
     intro:
-      "We coordinate independent inspection — SGS, Cotecna or equivalent — at sampling and at loading, and make sure you see the goods and the container before it sails.",
+      "We engage an independent, internationally accredited inspection firm — the SGS / Cotecna / Bureau Veritas tier — at sampling and at loading, and make sure you see the goods and the container before it sails.",
     scope: [
       "Inspection scope defined to your product and contract",
-      "Accredited inspector (SGS / Cotecna / equivalent) booked and briefed",
+      "Independent accredited inspector engaged on your behalf and briefed to your spec",
       "Attendance at sampling and/or container loading",
       "Photo and video evidence of goods, quantity and seal",
       "Inspection report reviewed and explained to you",

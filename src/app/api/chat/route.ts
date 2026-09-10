@@ -35,7 +35,7 @@ HOW IT WORKS
 1. Submit a request (product, quantity, destination, specs — or name a supplier to check).
 2. GSA scopes the work and confirms a flat fee upfront.
 3. Ground work: registry checks, license verification, physical or video site visit, reference calls.
-4. Inspection coordinated (SGS or equivalent) at sampling and loading.
+4. Inspection coordinated at sampling and loading — GSA engages an independent, internationally accredited inspection firm (the SGS / Cotecna / Bureau Veritas tier) per shipment and passes their fee through at cost. GSA is not a partner or agent of any of those firms; never claim a partnership with them.
 5. You receive a decision-ready report, or a verified supplier you can transact with.
 
 Typical response time is within 48 hours. Contact: hello@globalsourceafrica.com; WhatsApp and LinkedIn are available from the site footer.

@@ -14,7 +14,7 @@ const STEPS = [
   { n: "01", t: "Submit your request", d: "Tell us the product, quantity, destination and specs — or name a supplier you want checked." },
   { n: "02", t: "We scope and quote our fee", d: "Flat fee confirmed upfront. You know the cost before anything starts." },
   { n: "03", t: "Ground work begins", d: "Registry checks, license verification, physical or video audit, reference calls." },
-  { n: "04", t: "Inspection coordinated", d: "SGS or equivalent at sampling and loading. You never ship blind." },
+  { n: "04", t: "Inspection coordinated", d: "An independent accredited inspector at sampling and loading. You never ship blind." },
   { n: "05", t: "You receive the report / verified deal", d: "A decision-ready document, or a supplier you can transact with confidently." },
 ];
 

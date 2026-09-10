@@ -1,7 +1,7 @@
 import { MonoLabel } from "./MonoLabel";
 
 // Mono "manifest" strip of trust signals, dot-separated.
-// e.g. <TrustStrip items={["SGS-COORDINATED", "48H RESPONSE", "FLAT-FEE REPORTS"]} />
+// e.g. <TrustStrip items={["ACCREDITED INSPECTION", "48H RESPONSE", "FLAT-FEE REPORTS"]} />
 export function TrustStrip({
   items,
   className = "",

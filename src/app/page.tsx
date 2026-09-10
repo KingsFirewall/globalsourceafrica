@@ -59,7 +59,7 @@ export default function HomePage() {
               <ShieldCheck className="h-4 w-4" /> Verify a Supplier
             </Link>
           </div>
-          <TrustStrip className="mt-8 justify-center text-steel" items={["SGS-COORDINATED", "5 ORIGINS", "48H RESPONSE", "FLAT-FEE REPORTS"]} />
+          <TrustStrip className="mt-8 justify-center text-steel" items={["ACCREDITED INSPECTION", "5 ORIGINS", "48H RESPONSE", "FLAT-FEE REPORTS"]} />
 
           {/* Container under the headline — fixed pose rolls in place, so the
               column stays tight instead of reserving sweep room */}
