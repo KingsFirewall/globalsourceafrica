@@ -50,7 +50,7 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
     send(
       input.email,
       `We received your request · ${ref}`,
-      `Thanks for contacting GlobalSource Africa.\n\nYour reference is ${ref}. Our team reviews every request and replies within 48 hours (Accra, Ghana · GMT).\n\n— GlobalSource Africa`
+      `Thanks for contacting GlobalSource Africa.\n\nYour reference is ${ref}. Our team reviews every request and replies within 48 hours (GMT to GMT+3).\n\n— GlobalSource Africa`
     )
   );
   await Promise.allSettled(jobs);

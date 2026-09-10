@@ -74,7 +74,7 @@ export function SiteFooter() {
             </li>
           </ul>
           <MonoLabel className="mt-4 block text-white/40">
-            RESPONSE WITHIN 48 HOURS · ACCRA, GHANA (GMT)
+            RESPONSE WITHIN 48 HOURS · 5 AFRICAN ORIGINS
           </MonoLabel>
         </div>
       </div>
@@ -82,9 +82,9 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} GlobalSource Africa. On-ground sourcing &amp; verification.</p>
-          {/* Entity line — Ghana placeholder until the owner confirms. */}
+          {/* Entity line — placeholder until the owner confirms registration. */}
           <p className="font-mono uppercase tracking-[0.15em]">
-            GSAU 402 918 · 45G1 — REG. PLACEHOLDER (GHANA)
+            GSAU 402 918 · 45G1 — REG. PLACEHOLDER
           </p>
         </div>
       </div>

@@ -30,7 +30,7 @@ export function LandingCTA() {
             </Link>
           </div>
           <MonoLabel as="p" className="mt-5 text-center text-white/50">
-            RESPONSE WITHIN 48 HOURS · ACCRA, GHANA (GMT)
+            RESPONSE WITHIN 48 HOURS · 5 AFRICAN ORIGINS
           </MonoLabel>
         </div>
 

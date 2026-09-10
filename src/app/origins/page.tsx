@@ -3,39 +3,13 @@ import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 import { MonoLabel } from "@/components/v2/MonoLabel";
 import { BackToHome } from "@/components/v2/BackToHome";
+import { ORIGINS } from "@/lib/v2/origins";
 
 export const metadata: Metadata = {
   title: "Origins — GlobalSource Africa",
   description:
-    "Where our ground presence is deepest. Ghana first — cocoa, shea and cashew — with Egypt and Nigeria next as clients demand them.",
+    "Five origins with people on the ground: Nigeria, Ghana, Egypt, Ethiopia and Tanzania — coffee, cocoa, cashew, sesame, shea, herbs and spices.",
 };
-
-const ORIGINS = [
-  {
-    slug: "ghana",
-    name: "Ghana",
-    status: "Live",
-    live: true,
-    blurb: "English-speaking, politically stable, and a long-established exporter of cocoa, shea and cashew. Our deepest ground presence.",
-    regions: ["Ashanti — cocoa, processing & export", "Northern — shea & botanicals", "Bono — cashew"],
-  },
-  {
-    slug: "egypt",
-    name: "Egypt",
-    status: "Next",
-    live: false,
-    blurb: "Herbs, botanicals and Nile Delta crops. On our roadmap as buyer demand grows.",
-    regions: ["Fayoum — herbs & botanicals", "Nile Delta — crops", "Cairo — processing & export"],
-  },
-  {
-    slug: "nigeria",
-    name: "Nigeria",
-    status: "Next",
-    live: false,
-    blurb: "Sesame, hibiscus, cashew and more. Planned as our network expands.",
-    regions: ["Kano — sesame & hibiscus", "Benue — sesame", "Southern belt — cashew"],
-  },
-];
 
 export default function OriginsPage() {
   return (
@@ -48,37 +22,41 @@ export default function OriginsPage() {
             Where we&apos;re on the ground
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-white/70">
-            We&apos;d rather be honest about where we&apos;re strong than claim a whole
-            continent. Ghana today; more origins as clients demand them.
+            Five origins, each with our own people in-country — not agents on the
+            end of a phone. We name the regions and the licensing bodies we check,
+            so you can hold us to it.
           </p>
         </div>
       </section>
 
       <section className="bg-paper">
-        <div className="mx-auto max-w-5xl px-4 py-12">
-          <div className="grid gap-5 md:grid-cols-3">
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {ORIGINS.map((o) => (
-              <div key={o.slug} className={`rounded-xl border bg-white p-6 ${o.live ? "border-container" : "border-steel/20"}`}>
+              <div key={o.slug} className="flex flex-col rounded-xl border border-container bg-white p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-container" />
                     <h2 className="gsa-heading text-xl font-bold text-navy">{o.name}</h2>
                   </div>
-                  <span className={`rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest ${o.live ? "bg-cleared/10 text-cleared" : "bg-steel/10 text-steel"}`}>
-                    {o.status}
+                  <span className="rounded-full bg-cleared/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-cleared">
+                    Live
                   </span>
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-steel">{o.blurb}</p>
                 <ul className="mt-4 space-y-1.5 font-mono text-xs uppercase tracking-wide text-navy/70">
                   {o.regions.map((r) => (
-                    <li key={r}>· {r}</li>
+                    <li key={r.name}>
+                      · {r.name} — {r.note}
+                    </li>
                   ))}
                 </ul>
-                {o.live && (
-                  <Link href={`/origins/${o.slug}`} className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-container hover:gap-2.5">
-                    What we verify in {o.name} <ArrowRight className="h-4 w-4" />
-                  </Link>
-                )}
+                <Link
+                  href={`/origins/${o.slug}`}
+                  className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-container hover:gap-2.5"
+                >
+                  What we verify in {o.name} <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             ))}
           </div>

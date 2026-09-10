@@ -102,7 +102,7 @@ export function IntakeForm({ initialService = "" }: { initialService?: string })
         <CheckCircle2 className="mx-auto h-10 w-10 text-cleared" />
         <h2 className="gsa-heading mt-3 text-2xl font-bold text-navy">Request received</h2>
         <MonoLabel as="p" className="mt-3 justify-center text-container">REF: {ref}</MonoLabel>
-        <p className="mt-3 text-steel">We reply within 48 hours (Accra, Ghana · GMT).</p>
+        <p className="mt-3 text-steel">We reply within 48 hours (GMT to GMT+3).</p>
       </div>
     );
   }

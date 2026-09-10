@@ -127,8 +127,8 @@ export const SERVICES: Service[] = [
         a: "Our coordination fee is flat; the accredited inspector's own fee is passed through at cost and quoted upfront.",
       },
       {
-        q: "Can you inspect outside Ghana?",
-        a: "Yes — inspection coordination travels with your shipment. Ground presence is strongest in Ghana; we arrange accredited inspectors in other origins as needed.",
+        q: "Can you inspect outside your five origins?",
+        a: "Yes — inspection coordination travels with your shipment. We have our own people in Nigeria, Ghana, Egypt, Ethiopia and Tanzania; elsewhere we arrange accredited inspectors as needed.",
       },
     ],
   },

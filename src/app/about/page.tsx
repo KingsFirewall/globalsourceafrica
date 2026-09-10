@@ -75,7 +75,7 @@ export default function AboutPage() {
           <div className="mt-8 rounded-xl border border-steel/20 bg-paper p-6">
             <MonoLabel className="text-steel">ENTITY</MonoLabel>
             <p className="mt-2 text-sm text-navy/80">
-              GlobalSource Africa — registered trade services entity (Ghana).
+              GlobalSource Africa — registered trade services entity operating across Nigeria, Ghana, Egypt, Ethiopia and Tanzania.
               <span className="font-mono text-xs uppercase tracking-wider text-steel"> · Registration details to be confirmed.</span>
             </p>
           </div>

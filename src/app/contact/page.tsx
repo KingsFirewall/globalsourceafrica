@@ -6,7 +6,7 @@ import { BackToHome } from "@/components/v2/BackToHome";
 
 export const metadata: Metadata = {
   title: "Contact — GlobalSource Africa",
-  description: "Email, WhatsApp and LinkedIn. We reply within 48 hours (Accra, Ghana · GMT).",
+  description: "Email, WhatsApp and LinkedIn. We reply within 48 hours across our five African origins.",
 };
 
 export default function ContactPage() {
@@ -40,7 +40,7 @@ export default function ContactPage() {
             </a>
             <div className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5">
               <Clock className="h-5 w-5 text-container" />
-              <span className="text-navy">Mon–Fri · Accra, Ghana (GMT)</span>
+              <span className="text-navy">Mon–Fri · GMT to GMT+3</span>
             </div>
           </div>
 

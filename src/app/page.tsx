@@ -7,16 +7,11 @@ import { ServiceCard } from "@/components/v2/ServiceCard";
 import { CraneSection } from "@/components/v2/scenes/CraneSection";
 import { LandingCTA } from "@/components/v2/scenes/LandingCTA";
 import { SERVICES } from "@/lib/v2/services";
+import { ORIGINS } from "@/lib/v2/origins";
 
 export const metadata = {
   title: "GlobalSource Africa — supplier verification & sourcing in Africa",
 };
-
-const REGIONS = [
-  { name: "Ashanti", note: "Cocoa · processing & export" },
-  { name: "Northern", note: "Shea & botanicals" },
-  { name: "Bono", note: "Cashew" },
-];
 
 const ARTICLES = [
   { slug: "verify-african-supplier-before-deposit", title: "How to verify an African supplier before paying a deposit" },
@@ -47,7 +42,7 @@ export default function HomePage() {
           className="pointer-events-none absolute left-1/2 z-0 max-w-none -translate-x-1/2 select-none -bottom-8 w-[145%] sm:-bottom-24 sm:w-[130%] lg:w-full lg:[bottom:calc(460px_-_44.7vw)]"
         />
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-4 pb-0 pt-6 text-center lg:pt-8">
-          <MonoLabel className="text-container">ON-GROUND SINCE 2026 · GHANA</MonoLabel>
+          <MonoLabel className="text-container">ON-GROUND SINCE 2026 · 5 AFRICAN ORIGINS</MonoLabel>
           <h1 className="gsa-heading mt-5 max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight text-navy sm:text-5xl lg:text-6xl">
             Your verification and sourcing partner on the ground in Africa
           </h1>
@@ -64,7 +59,7 @@ export default function HomePage() {
               <ShieldCheck className="h-4 w-4" /> Verify a Supplier
             </Link>
           </div>
-          <TrustStrip className="mt-8 justify-center text-steel" items={["SGS-COORDINATED", "ACCRA / KUMASI", "48H RESPONSE", "FLAT-FEE REPORTS"]} />
+          <TrustStrip className="mt-8 justify-center text-steel" items={["SGS-COORDINATED", "5 ORIGINS", "48H RESPONSE", "FLAT-FEE REPORTS"]} />
 
           {/* Container under the headline — fixed pose rolls in place, so the
               column stays tight instead of reserving sweep room */}
@@ -197,37 +192,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6 · ORIGINS — GHANA FIRST */}
+      {/* 6 · ORIGINS — FIVE COUNTRIES */}
       <section className="gsa-corrugation bg-navy text-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 lg:grid-cols-2 lg:items-center">
           <div>
             <MonoLabel className="text-gold">ORIGINS</MonoLabel>
             <h2 className="gsa-heading mt-3 text-3xl font-bold sm:text-4xl">
-              Ghana first — where our ground presence is deepest
+              Five origins. Our own people in each.
             </h2>
             <p className="mt-4 max-w-lg text-white/70">
-              Ghana is one of Africa&apos;s lowest-friction origins: English-speaking,
-              politically stable, and a long-established exporter of cocoa, shea
-              and cashew. That&apos;s where our people are, and where our verification
-              is strongest.
+              <span className="text-white">Nigeria, Ghana, Egypt, Ethiopia and Tanzania</span> — coffee,
+              cocoa, cashew, sesame, shea, herbs and spices. In every one of them we
+              have people in-country, not agents on the end of a phone.
             </p>
             <p className="mt-3 max-w-lg text-white/60">
-              More origins as clients demand them — <span className="text-white">Egypt and Nigeria next</span>. We&apos;d
-              rather be honest about where we&apos;re strong than claim a whole continent.
+              We name the regions we work in and the licensing bodies we check, so
+              you can hold us to it. That is the whole point of a trust service.
             </p>
             <Link href="/origins" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-gold hover:gap-2.5">
               Explore origins <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="grid gap-3">
-            {REGIONS.map((r) => (
-              <div key={r.name} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            {ORIGINS.map((o) => (
+              <Link
+                key={o.slug}
+                href={`/origins/${o.slug}`}
+                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-gold/50 hover:bg-white/[0.06]"
+              >
                 <MapPin className="h-5 w-5 shrink-0 text-gold" />
                 <div>
-                  <p className="font-semibold">{r.name}</p>
-                  <p className="font-mono text-xs uppercase tracking-wider text-white/50">{r.note}</p>
+                  <p className="font-semibold">{o.name}</p>
+                  <p className="font-mono text-xs uppercase tracking-wider text-white/50">{o.headline}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
