@@ -243,7 +243,7 @@ export default function HomePage() {
           <div>
             <MonoLabel className="text-steel">WHO&apos;S ON THE GROUND</MonoLabel>
             <h2 className="gsa-heading mt-3 text-2xl font-bold text-navy">Isreal Kingsley</h2>
-            <p className="font-mono text-xs uppercase tracking-wider text-steel">Founder · Accra / Kumasi, Ghana</p>
+            <p className="font-mono text-xs uppercase tracking-wider text-steel">Founder · Lagos, Nigeria</p>
             <p className="mt-4 max-w-xl text-steel">
               Trust services can&apos;t be anonymous. GlobalSource Africa is run by
               real people, in-country, who put their name to every report. When we

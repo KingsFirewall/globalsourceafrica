@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Mail, MessageCircle, Linkedin } from "lucide-react";
 import { MonoLabel } from "./MonoLabel";
 
-// v2 footer — contact channels, entity line (Ghana placeholder), and a mono
+// v2 footer — contact channels, entity line (Nigeria), and a mono
 // container-plate easter egg. Hidden on admin/auth.
 export function SiteFooter() {
   const pathname = usePathname();
@@ -82,9 +82,9 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} GlobalSource Africa. On-ground sourcing &amp; verification.</p>
-          {/* Entity line — placeholder until the owner confirms registration. */}
+          {/* Entity line — RC number still to be supplied by the owner. */}
           <p className="font-mono uppercase tracking-[0.15em]">
-            GSAU 402 918 · 45G1 — REG. PLACEHOLDER
+            GSAU 402 918 · 45G1 — REGISTERED IN NIGERIA
           </p>
         </div>
       </div>

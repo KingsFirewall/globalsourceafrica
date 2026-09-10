@@ -36,7 +36,7 @@ export const ORIGINS: Origin[] = [
     blurb:
       "Huge volumes and huge variance in who you're dealing with. Nigeria rewards buyers who verify — and punishes those who don't.",
     intro:
-      "Nigeria offers the deepest supply pool in West Africa across sesame, hibiscus, cocoa and ginger. It also has the widest gap between real exporters and intermediaries, which is precisely why on-ground verification pays for itself here.",
+      "Nigeria is our home market — the company is registered here and our founder is based in Lagos. It offers the deepest supply pool in West Africa across sesame, hibiscus, cocoa and ginger, and also the widest gap between real exporters and intermediaries, which is precisely why on-ground verification pays for itself here.",
     regions: [
       { name: "Kano", note: "Sesame & hibiscus" },
       { name: "Benue", note: "Sesame & soya" },

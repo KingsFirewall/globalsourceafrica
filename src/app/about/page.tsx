@@ -61,7 +61,7 @@ export default function AboutPage() {
               <MonoLabel className="text-steel">WHO&apos;S ON THE GROUND</MonoLabel>
               <h2 className="gsa-heading mt-2 text-2xl font-bold text-navy">Isreal Kingsley</h2>
               <p className="font-mono text-xs uppercase tracking-wider text-steel">
-                Founder · Accra / Kumasi, Ghana
+                Founder · Lagos, Nigeria
               </p>
               <p className="mt-4 text-steel">
                 &ldquo;When we tell you a supplier checks out, we&apos;ve stood in front
@@ -75,8 +75,8 @@ export default function AboutPage() {
           <div className="mt-8 rounded-xl border border-steel/20 bg-paper p-6">
             <MonoLabel className="text-steel">ENTITY</MonoLabel>
             <p className="mt-2 text-sm text-navy/80">
-              GlobalSource Africa — registered trade services entity operating across Nigeria, Ghana, Egypt, Ethiopia and Tanzania.
-              <span className="font-mono text-xs uppercase tracking-wider text-steel"> · Registration details to be confirmed.</span>
+              GlobalSource Africa — a trade services company registered in Nigeria, operating across Nigeria, Ghana, Egypt, Ethiopia and Tanzania.
+              <span className="font-mono text-xs uppercase tracking-wider text-steel"> · RC number to be added.</span>
             </p>
           </div>
 
