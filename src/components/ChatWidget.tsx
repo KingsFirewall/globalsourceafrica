@@ -100,6 +100,7 @@ export function ChatWidget() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hydratedRef = useRef(false);
 
@@ -132,6 +133,29 @@ export function ChatWidget() {
     } catch {}
     hydratedRef.current = true;
   }, []);
+
+  // Desktop uses Lenis smooth scroll, which listens for wheel events on the
+  // window and preventDefault()s them, so a wheel over the open panel scrolled
+  // the page instead of the message list. `data-lenis-prevent` makes Lenis skip
+  // any wheel whose composed path crosses the panel, handing the event back to
+  // the browser: inside the message list that scrolls the list natively (and
+  // `overscroll-contain` stops it chaining to the body at the ends). Over the
+  // header/input there is nothing scrollable, so the browser would fall through
+  // to the page again — swallow those here. Must be a native non-passive
+  // listener; React routes onWheel through a passive root listener where
+  // preventDefault is a no-op.
+  useEffect(() => {
+    if (!open) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const onWheel = (e: WheelEvent) => {
+      const list = scrollRef.current;
+      if (list && e.target instanceof Node && list.contains(e.target)) return;
+      e.preventDefault();
+    };
+    panel.addEventListener("wheel", onWheel, { passive: false });
+    return () => panel.removeEventListener("wheel", onWheel);
+  }, [open]);
 
   // While the fullscreen mobile panel is open, lock background page scrolling so
   // touch-scrolling the message list can't chain to the body and drag the whole
@@ -250,6 +274,8 @@ export function ChatWidget() {
       {/* Panel */}
       {open && (
         <div
+          ref={panelRef}
+          data-lenis-prevent
           style={
             mobileViewport ? { top: mobileViewport.top, height: mobileViewport.height } : undefined
           }
