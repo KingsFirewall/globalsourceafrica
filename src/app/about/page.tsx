@@ -54,12 +54,12 @@ export default function AboutPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/ceo.jpg"
-              alt="Isreal Kingsley, founder of GlobalSource Africa"
+              alt="Kingsley Israel, founder of GlobalSource Africa"
               className="h-44 w-44 shrink-0 rounded-2xl object-cover object-top"
             />
             <div>
               <MonoLabel className="text-steel">WHO&apos;S ON THE GROUND</MonoLabel>
-              <h2 className="gsa-heading mt-2 text-2xl font-bold text-navy">Isreal Kingsley</h2>
+              <h2 className="gsa-heading mt-2 text-2xl font-bold text-navy">Kingsley Israel</h2>
               <p className="font-mono text-xs uppercase tracking-wider text-steel">
                 Founder · Lagos, Nigeria
               </p>
@@ -75,8 +75,8 @@ export default function AboutPage() {
           <div className="mt-8 rounded-xl border border-steel/20 bg-paper p-6">
             <MonoLabel className="text-steel">ENTITY</MonoLabel>
             <p className="mt-2 text-sm text-navy/80">
-              GlobalSource Africa — a trade services company registered in Nigeria, operating across Nigeria, Ghana, Egypt, Ethiopia and Tanzania.
-              <span className="font-mono text-xs uppercase tracking-wider text-steel"> · RC number to be added.</span>
+              Global Source Africa Limited — registered in Nigeria, RC 9851214. Trading as GlobalSource Africa, operating across Nigeria, Ghana, Egypt, Ethiopia and Tanzania.
+              <span className="font-mono text-xs uppercase tracking-wider text-steel"> · Verify us at the Corporate Affairs Commission.</span>
             </p>
           </div>
 

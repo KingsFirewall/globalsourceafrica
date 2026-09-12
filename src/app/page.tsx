@@ -237,12 +237,12 @@ export default function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/ceo.jpg"
-            alt="Isreal Kingsley, founder of GlobalSource Africa"
+            alt="Kingsley Israel, founder of GlobalSource Africa"
             className="h-40 w-40 shrink-0 rounded-2xl object-cover object-top"
           />
           <div>
             <MonoLabel className="text-steel">WHO&apos;S ON THE GROUND</MonoLabel>
-            <h2 className="gsa-heading mt-3 text-2xl font-bold text-navy">Isreal Kingsley</h2>
+            <h2 className="gsa-heading mt-3 text-2xl font-bold text-navy">Kingsley Israel</h2>
             <p className="font-mono text-xs uppercase tracking-wider text-steel">Founder · Lagos, Nigeria</p>
             <p className="mt-4 max-w-xl text-steel">
               Trust services can&apos;t be anonymous. GlobalSource Africa is run by

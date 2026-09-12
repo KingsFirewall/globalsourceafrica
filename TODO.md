@@ -28,20 +28,27 @@ Tick items off as they land. Newest decisions at the bottom of "Done".
 ## ☎️ Dead buttons on the live site
 
 - [ ] **You · WhatsApp Business number**, full format `+234…`
-- [ ] **You · LinkedIn company page URL**
+- [ ] **⏰ REMINDER · LinkedIn company page URL** — page not created yet (as of
+      2026-09-12). Owner asked to be reminded. Footer + contact still link to a bare
+      `linkedin.com` until then.
 - [ ] **You · Phone number** to display
 - [ ] **Me · Patch them into** `contact/page.tsx` and `SiteFooter.tsx` — both currently
       point at an empty `wa.me/` and a bare `linkedin.com`, so they go nowhere.
 
 ## 🏢 Company identity
 
-- [ ] **You · RC number** from the CAC certificate → footer + About entity line
-- [ ] **You · Exact registered company name**, character for character
-- [ ] **You · Registered office address** (Lagos) + whether to publish it
-- [ ] **You · TIN** (FIRS)
-- [ ] **You · Confirm founder name spelling** — site says "Isreal Kingsley". Is it
-      Isreal or **Israel**? Appears on the home page and About.
-- [ ] **You · Founder LinkedIn + 2–3 line bio** (years in trade, background)
+- [x] **RC number** — 9851214, now published in the footer and on About
+- [x] **Registered company name** — Global Source Africa Limited (note: the legal name
+      is three words, the brand is one. Entity line carries the legal name; the brand
+      stays GlobalSource Africa everywhere else. That is correct, not an inconsistency.)
+- [x] **Founder name** — corrected to **Kingsley Israel**. The site had both the
+      spelling and the name order wrong ("Isreal Kingsley").
+- [ ] **Deferred · Registered office address** — skipped until there is a real one.
+      A trust business with no address is a gap a careful buyer notices, so worth
+      revisiting once premises are settled.
+- [ ] **Not for the site · TIN** — owner's decision: goes on invoices and documents
+      only, not published.
+- [ ] **You · Founder bio** — 2–3 lines: years in trade, background, what he did before.
 
 ## 📄 Sample verification report
 

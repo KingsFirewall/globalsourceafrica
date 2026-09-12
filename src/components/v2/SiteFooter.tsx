@@ -82,9 +82,10 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} GlobalSource Africa. On-ground sourcing &amp; verification.</p>
-          {/* Entity line — RC number still to be supplied by the owner. */}
+          {/* Entity line — real registered name + RC. We sell 'check the registry', so
+              publishing our own number is the cheapest proof we practise it. */}
           <p className="font-mono uppercase tracking-[0.15em]">
-            GSAU 402 918 · 45G1 — REGISTERED IN NIGERIA
+            GLOBAL SOURCE AFRICA LIMITED · RC 9851214 · NIGERIA
           </p>
         </div>
       </div>
