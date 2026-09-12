@@ -75,18 +75,26 @@ export default function HomePage() {
           line reads as standing on the field without ever being overlapped. */}
       {/* --field-h    : rendered height of the field band.
           --field-sink : how far the heading's bottom sinks BELOW the image's top
-                         edge. The asset is transparent for its first ~40% (260 of
-                         644px) and object-cover scales it by width, so the image
-                         only turns opaque ~16.9vw down from its own top edge
-                         (260/1536 = 0.169). Sinking the heading just past that line
-                         drops the letters' feet into the crop line and the farmers,
-                         while their bodies stay clear against the paper. */}
+                         edge.
+
+          Both are DERIVED from the asset, not taste — re-measure if it is ever
+          replaced again. object-cover scales the image by width, so a source row
+          y lands at (y / 1536) * 100vw below the band's top.
+
+          field.webp is 1536x1024 and fades from transparent sky into the field
+          gradually (25% opaque at row 371, 90% at row 614) rather than at a hard
+          horizon. Row 371 -> 24.2vw is where it starts genuinely occluding, so the
+          heading sinks to just past there: the letters' feet go into the fade and
+          the farmers, while their bodies stay clear against the paper.
+
+          --field-h keeps roughly the same depth of field visible below the horizon
+          as the previous asset did (~18vw), hence 24 + 18 = 42vw. */}
       <section
         className="relative overflow-hidden bg-paper pb-[calc(var(--field-h)_-_var(--field-sink))]"
         style={
           {
-            "--field-h": "clamp(190px, 35vw, 620px)",
-            "--field-sink": "calc(16.9vw + 20px)",
+            "--field-h": "clamp(230px, 42vw, 740px)",
+            "--field-sink": "calc(24vw + 20px)",
           } as React.CSSProperties
         }
       >
