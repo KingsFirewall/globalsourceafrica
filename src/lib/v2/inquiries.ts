@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { emailConfigured, sendEmail, notifyInbox, shell, rows, button, escapeHtml, siteUrl } from "./email";
 
 const schema = z.object({
   service_type: z.enum(["verification", "discovery", "inspection", "sourcing", "unsure"]),
@@ -26,34 +27,60 @@ async function nextRef(db: ReturnType<typeof createSupabaseAdminClient>): Promis
   return `GSA-${year}-${seq}`;
 }
 
-// Fire notification + auto-ack emails via Resend when configured; otherwise a
-// graceful no-op so the form works before email is wired (RESEND_API_KEY +
-// verified domain, NOTIFY_EMAIL for the founder inbox).
+// Notify the team and acknowledge the buyer. Best-effort by design: the inquiry
+// is already in the database by this point, so a mail failure must never surface
+// to the visitor as a form error.
 async function sendEmails(ref: string, input: z.infer<typeof schema>) {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.NOTIFY_FROM || "GlobalSource Africa <onboarding@resend.dev>";
-  const notify = process.env.NOTIFY_EMAIL;
-  if (!key) return;
+  if (!emailConfigured()) return;
 
-  const send = (to: string, subject: string, text: string) =>
-    fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to, subject, text }),
-    }).catch(() => {});
+  const detail: [string, string][] = [
+    ["Reference", ref],
+    ["Service", input.service_type],
+    ["Email", input.email],
+    ["Company", input.company || "—"],
+    ["Country", input.country || "—"],
+    ["WhatsApp", input.whatsapp || "—"],
+    ...Object.entries(input.payload).map(
+      ([k, v]) => [k.replace(/_/g, " "), v] as [string, string]
+    ),
+  ];
+  const plain = detail.map(([k, v]) => `${k}: ${v}`).join("\n");
 
-  const summary = `${ref} · ${input.service_type}\nEmail: ${input.email}\nCompany: ${input.company ?? "—"} (${input.country ?? "—"})\nWhatsApp: ${input.whatsapp ?? "—"}\n\n${Object.entries(input.payload).map(([k, v]) => `${k}: ${v}`).join("\n")}`;
+  await Promise.allSettled([
+    // replyTo is the buyer, so hitting Reply in the inbox answers them directly
+    // instead of copy-pasting the address out of the body.
+    sendEmail({
+      to: notifyInbox(),
+      replyTo: input.email,
+      subject: `New inquiry ${ref} · ${input.service_type}`,
+      html: shell(
+        `New ${input.service_type} inquiry`,
+        rows(detail) +
+          `<p style="margin:16px 0 0;font-size:13px;color:#6B7683;">Reply to this email to answer ${escapeHtml(
+            input.email
+          )} directly.</p>`
+      ),
+      text: plain,
+    }),
+    sendEmail({
+      to: input.email,
+      replyTo: notifyInbox(),
+      subject: `We received your request · ${ref}`,
+      html: shell(
+        "Thanks — we have your request",
+        `<p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#0B2239;">Your reference is <strong>${escapeHtml(
+          ref
+        )}</strong>. Someone on our team reviews every request personally and replies within 48 hours (GMT to GMT+3).</p>
+         <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0B2239;">If anything changes in the meantime, just reply to this email.</p>
+         ${button(siteUrl() + "/sample-report", "See a sample report")}`
+      ),
+      text: `Thanks for contacting GlobalSource Africa.
 
-  const jobs: Promise<unknown>[] = [];
-  if (notify) jobs.push(send(notify, `New inquiry ${ref} (${input.service_type})`, summary));
-  jobs.push(
-    send(
-      input.email,
-      `We received your request · ${ref}`,
-      `Thanks for contacting GlobalSource Africa.\n\nYour reference is ${ref}. Our team reviews every request and replies within 48 hours (GMT to GMT+3).\n\n— GlobalSource Africa`
-    )
-  );
-  await Promise.allSettled(jobs);
+Your reference is ${ref}. We review every request and reply within 48 hours (GMT to GMT+3).
+
+— GlobalSource Africa`,
+    }),
+  ]);
 }
 
 export async function submitInquiry(raw: InquiryInput): Promise<InquiryResult> {
