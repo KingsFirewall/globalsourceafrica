@@ -17,12 +17,14 @@ Tick items off as they land. Newest decisions at the bottom of "Done".
 
 ## 📧 Stop losing leads — this week
 
-- [ ] **You · Create a Resend account** (resend.com), verify `globalsourceafrica.com`,
-      generate an API key. `hello@globalsourceafrica.com` is already verified. ✅
-- [ ] **Me · Wire it up** — set `RESEND_API_KEY`, `NOTIFY_EMAIL`, `NOTIFY_FROM` on
-      Vercel and test end to end. Sending code already exists in `src/lib/v2/inquiries.ts`;
-      it is a silent no-op until the key is present, so every inquiry currently
-      vanishes with no alert to you and no acknowledgement to the buyer.
+- [x] **Resend account created**, sending subdomain `mail.globalsourceafrica.com`
+      verified (DKIM + SPF green), API key generated. 2026-09-12.
+- [x] **Me · Code wired** — `src/lib/v2/email.ts` sends branded HTML for inquiries and
+      the sample-report gate, with reply-to pointing at the other party.
+- [ ] **You · Add the env vars on Vercel** — `RESEND_API_KEY`, `NOTIFY_EMAIL`,
+      `NOTIFY_FROM`, then redeploy. Until then every inquiry still vanishes silently.
+      NOTIFY_FROM must be an address on `mail.globalsourceafrica.com` — the root
+      domain is not verified in Resend and sending from it will be rejected.
 - [ ] **You · Submit a test request** on the live site and confirm both emails arrive.
 
 ## ☎️ Dead buttons on the live site

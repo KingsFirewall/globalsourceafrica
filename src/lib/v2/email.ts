@@ -14,10 +14,16 @@ export function emailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY);
 }
 
-// The sending identity must be on a domain verified in Resend — verifying the
-// mailbox alone is not enough. Override with NOTIFY_FROM.
+// The sending identity must sit on the domain verified in Resend. We verified the
+// SUBDOMAIN mail.globalsourceafrica.com (the recommended setup — a bounce problem
+// on marketing mail can't then damage the root domain's reputation), so the From
+// address lives there and NOT on the bare root, which Resend would reject.
+//
+// Replies are a separate matter: every message sets replyTo to a real monitored
+// inbox, so recipients answer to hello@globalsourceafrica.com and never see this
+// address. Override with NOTIFY_FROM.
 function sender(): string {
-  return process.env.NOTIFY_FROM || "GlobalSource Africa <hello@globalsourceafrica.com>";
+  return process.env.NOTIFY_FROM || "GlobalSource Africa <hello@mail.globalsourceafrica.com>";
 }
 
 /** Where founder notifications go. Falls back to the public inbox. */
