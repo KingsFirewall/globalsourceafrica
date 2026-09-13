@@ -26,9 +26,9 @@ export default function ContactPage() {
       <section className="bg-white">
         <div className="mx-auto max-w-3xl px-4 py-12">
           <div className="grid gap-4 sm:grid-cols-2">
-            <a href="mailto:hello@globalsourceafrica.com" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
+            <a href="mailto:info@globalsourceafrica.com" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
               <Mail className="h-5 w-5 text-container" />
-              <span className="text-navy">hello@globalsourceafrica.com</span>
+              <span className="text-navy">info@globalsourceafrica.com</span>
             </a>
             <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
               <MessageCircle className="h-5 w-5 text-container" />

@@ -266,7 +266,7 @@ export default function SampleReportPrintPage() {
           <p className="font-mono text-[9px] uppercase tracking-widest text-steel">Issued by</p>
           <p className="gsa-heading text-[13px] font-bold text-navy">GlobalSource Africa</p>
           <p className="text-[10px] text-steel">
-            Registered in Nigeria · hello@globalsourceafrica.com
+            Registered in Nigeria · info@globalsourceafrica.com
           </p>
         </div>
         <p className="-rotate-2 shrink-0 rounded border-2 border-gold px-3 py-1 text-center font-mono text-[9px] uppercase leading-tight tracking-widest text-goldDark">

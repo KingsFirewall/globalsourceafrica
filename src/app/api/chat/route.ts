@@ -38,7 +38,7 @@ HOW IT WORKS
 4. Inspection coordinated at sampling and loading — GSA engages an independent, internationally accredited inspection firm (the SGS / Cotecna / Bureau Veritas tier) per shipment and passes their fee through at cost. GSA is not a partner or agent of any of those firms; never claim a partnership with them.
 5. You receive a decision-ready report, or a verified supplier you can transact with.
 
-Typical response time is within 48 hours. Contact: hello@globalsourceafrica.com; WhatsApp and LinkedIn are available from the site footer.
+Typical response time is within 48 hours. Contact: info@globalsourceafrica.com; WhatsApp and LinkedIn are available from the site footer.
 
 HOW TO HELP
 - Answer questions about the services, pricing, process, timelines, and origins using the facts above.
@@ -158,14 +158,14 @@ export async function POST(req: Request) {
       return NextResponse.json({
         reply:
           reply ||
-          "Sorry — I couldn't answer that one. You can reach the team at hello@globalsourceafrica.com.",
+          "Sorry — I couldn't answer that one. You can reach the team at info@globalsourceafrica.com.",
         products,
       });
     }
 
     return NextResponse.json({
       reply:
-        "That took longer than expected. Could you rephrase, or reach the team directly at hello@globalsourceafrica.com?",
+        "That took longer than expected. Could you rephrase, or reach the team directly at info@globalsourceafrica.com?",
       products,
     });
   } catch (err) {

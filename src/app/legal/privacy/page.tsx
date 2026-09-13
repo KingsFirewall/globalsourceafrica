@@ -29,8 +29,8 @@ export default function PrivacyPage() {
           </p>
           <p>
             To access or delete your data, email{" "}
-            <a href="mailto:hello@globalsourceafrica.com" className="text-container hover:underline">
-              hello@globalsourceafrica.com
+            <a href="mailto:info@globalsourceafrica.com" className="text-container hover:underline">
+              info@globalsourceafrica.com
             </a>
             . Full policy to be finalised with counsel.
           </p>

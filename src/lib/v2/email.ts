@@ -20,15 +20,15 @@ export function emailConfigured(): boolean {
 // address lives there and NOT on the bare root, which Resend would reject.
 //
 // Replies are a separate matter: every message sets replyTo to a real monitored
-// inbox, so recipients answer to hello@globalsourceafrica.com and never see this
+// inbox, so recipients answer to info@globalsourceafrica.com and never see this
 // address. Override with NOTIFY_FROM.
 function sender(): string {
-  return process.env.NOTIFY_FROM || "GlobalSource Africa <hello@mail.globalsourceafrica.com>";
+  return process.env.NOTIFY_FROM || "GlobalSource Africa <info@mail.globalsourceafrica.com>";
 }
 
 /** Where founder notifications go. Falls back to the public inbox. */
 export function notifyInbox(): string {
-  return process.env.NOTIFY_EMAIL || "hello@globalsourceafrica.com";
+  return process.env.NOTIFY_EMAIL || "info@globalsourceafrica.com";
 }
 
 type SendArgs = {

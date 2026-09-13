@@ -58,8 +58,8 @@ export function SiteFooter() {
           <MonoLabel className="text-white/50">Contact</MonoLabel>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <a href="mailto:hello@globalsourceafrica.com" className="flex items-center gap-2 hover:text-white">
-                <Mail className="h-4 w-4" /> hello@globalsourceafrica.com
+              <a href="mailto:info@globalsourceafrica.com" className="flex items-center gap-2 hover:text-white">
+                <Mail className="h-4 w-4" /> info@globalsourceafrica.com
               </a>
             </li>
             <li>
