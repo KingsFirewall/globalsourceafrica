@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { tools as customTools, runTool } from "@/lib/chatbot/tools";
 import { getKnowledgeText } from "@/lib/chatbot/knowledge";
 import { SERVICES } from "@/lib/v2/services";
+import { describePage } from "@/lib/v2/page-context";
 
 // The assistant runs server-side only — the API key never reaches the browser.
 export const runtime = "nodejs";
@@ -17,7 +18,7 @@ type ClientMsg = { role: "user" | "assistant"; content: string };
 
 // Grounds the assistant in the real site so it answers from fact, not guesses.
 // The admin-editable knowledge base (Supabase) is appended when present.
-async function buildSystemPrompt(): Promise<string> {
+async function buildSystemPrompt(path?: string): Promise<string> {
   const services = SERVICES.map(
     (s) =>
       `- ${s.name} (${s.priceLabel}, ${s.timeline}): ${s.tagline} Deliverable: ${s.deliverable}`
@@ -41,6 +42,8 @@ HOW IT WORKS
 Typical response time is within 48 hours. Contact: info@globalsourceafrica.com; WhatsApp and LinkedIn are available from the site footer.
 
 HOW TO HELP
+- You are shown WHERE THE VISITOR IS on the site. Use it. When they ask "what do I do here", "what is this page", "what am I meant to fill in" or anything about "this page", answer about THAT page specifically — what it is for, what they can do on it, and the next step. Never answer a page question with the general company pitch.
+- Refer to what is actually on screen ("the box on this page", "step 2 asks for…"). If a form field is confusing, say what goes in it and that a rough answer is fine.
 - Answer questions about the services, pricing, process, timelines, and origins using the facts above.
 - When a visitor wants to start — verify a supplier, find suppliers, or source a product — collect their name, a contact (email OR phone), and what they need, then use the submit_quote_request tool (request_type "sourcing" for anything not a specific listed product). Confirm the details with them before submitting.
 - Use the web_search tool when the answer depends on information not on this site or that changes over time — current export regulations, commodity prices, a specific company's public record, shipping/logistics news, or anything the visitor asks you to look up. Cite what you found in plain language.
@@ -55,9 +58,19 @@ STYLE — read carefully, this matters
 - You represent a trust service — be straight and warm, never salesy or padded.`;
 
   const knowledge = (await getKnowledgeText().catch(() => "")).trim();
-  return knowledge
-    ? `${base}\n\nADDITIONAL KNOWLEDGE (maintained by the GSA team — treat as authoritative):\n${knowledge}`
-    : base;
+  // Briefing for the page the visitor is actually looking at. Without this the
+  // assistant can only answer with the company pitch, which is what made it feel
+  // like a brochure rather than help.
+  const page = describePage(path);
+
+  let prompt = base;
+  if (page) {
+    prompt += `\n\nWHERE THE VISITOR IS RIGHT NOW\nURL: ${path}\n${page}`;
+  }
+  if (knowledge) {
+    prompt += `\n\nADDITIONAL KNOWLEDGE (maintained by the GSA team — treat as authoritative):\n${knowledge}`;
+  }
+  return prompt;
 }
 
 export async function GET() {
@@ -73,7 +86,7 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: { messages?: ClientMsg[] };
+  let body: { messages?: ClientMsg[]; path?: string };
   try {
     body = await req.json();
   } catch {
@@ -101,7 +114,9 @@ export async function POST(req: Request) {
   }
 
   const client = new Anthropic();
-  const system = await buildSystemPrompt();
+  const system = await buildSystemPrompt(
+    typeof body.path === "string" ? body.path.slice(0, 200) : undefined
+  );
   const tools = [
     ...customTools,
     // Server-side web browsing (Anthropic-hosted, dynamic filtering on 4.8).

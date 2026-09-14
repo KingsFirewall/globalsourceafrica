@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle, X, Send, Loader2, ChevronRight, Leaf } from "lucide-react";
 
 type ProductCard = {
@@ -91,6 +92,16 @@ const STORAGE_KEY = "gsa_chat_v1";
 const CHAT_TTL_MS = 60 * 60 * 1000; // resume within 1h of last activity, else fresh
 
 export function ChatWidget() {
+  // Current route, sent with every message so the assistant can answer about the
+  // page in front of the visitor. Held in a ref as well as read from the hook:
+  // send() closes over its own scope, and the visitor may navigate between
+  // opening the panel and hitting enter, so the ref keeps it current.
+  const pathname = usePathname();
+  const pathRef = useRef(pathname);
+  useEffect(() => {
+    pathRef.current = pathname;
+  }, [pathname]);
+
   const [enabled, setEnabled] = useState(false);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
@@ -241,7 +252,7 @@ export function ChatWidget() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: next, path: pathRef.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? "Something went wrong.");
@@ -341,7 +352,7 @@ export function ChatWidget() {
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about a product…"
+              placeholder="Ask anything about this page…"
               // text-base (16px) prevents iOS Safari from auto-zooming on focus.
               className="flex-1 rounded-full border border-greenLine px-4 py-2 text-base text-ink focus:border-green focus:outline-none"
             />
