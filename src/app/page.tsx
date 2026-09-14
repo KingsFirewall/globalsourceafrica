@@ -81,20 +81,23 @@ export default function HomePage() {
           replaced again. object-cover scales the image by width, so a source row
           y lands at (y / 1536) * 100vw below the band's top.
 
-          field.webp is 1536x1024 and fades from transparent sky into the field
-          gradually (25% opaque at row 371, 90% at row 614) rather than at a hard
-          horizon. Row 371 -> 24.2vw is where it starts genuinely occluding, so the
-          heading sinks to just past there: the letters' feet go into the fade and
-          the farmers, while their bodies stay clear against the paper.
+          field.webp is 1536x1024, so at full-bleed width it is 1024/1536 = 66.7vw
+          tall. --field-h MUST equal that: any smaller and object-cover crops from
+          the bottom, which lops off the field the farmers are standing in and
+          leaves them as cut-out busts on a hard edge. Do not clamp it.
 
-          --field-h keeps roughly the same depth of field visible below the horizon
-          as the previous asset did (~18vw), hence 24 + 18 = 42vw. */}
+          --field-sink is measured to the TOP OF THE HEADS, which is row 215 =
+          14.0vw. Sinking a little past that dips the heading's feet into the
+          farmers while the three columns above stay clear against the paper.
+          Measure this as "first row containing any solidly opaque pixel" — asking
+          when some percentage of a row is opaque under-reports badly here, because
+          a row holding two heads is mostly empty sky. */}
       <section
         className="relative overflow-hidden bg-paper pb-[calc(var(--field-h)_-_var(--field-sink))]"
         style={
           {
-            "--field-h": "clamp(230px, 42vw, 740px)",
-            "--field-sink": "calc(24vw + 20px)",
+            "--field-h": "66.7vw",
+            "--field-sink": "calc(17vw + 20px)",
           } as React.CSSProperties
         }
       >
