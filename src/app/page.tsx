@@ -81,23 +81,34 @@ export default function HomePage() {
           replaced again. object-cover scales the image by width, so a source row
           y lands at (y / 1536) * 100vw below the band's top.
 
-          field.webp is 1536x1024, so at full-bleed width it is 1024/1536 = 66.7vw
-          tall. --field-h MUST equal that: any smaller and object-cover crops from
-          the bottom, which lops off the field the farmers are standing in and
-          leaves them as cut-out busts on a hard edge. Do not clamp it.
+          field.webp is a 2172x724 banner (3:1), so at full-bleed width it is
+          724/2172 = 33.3vw tall. --field-h MUST equal that exactly: smaller and
+          object-cover crops the field off the bottom, leaving the farmers as
+          cut-out busts on a hard edge. Never clamp it.
 
-          --field-sink is measured to the TOP OF THE HEADS, which is row 215 =
-          14.0vw. Sinking a little past that dips the heading's feet into the
-          farmers while the three columns above stay clear against the paper.
-          Measure this as "first row containing any solidly opaque pixel" — asking
-          when some percentage of a row is opaque under-reports badly here, because
-          a row holding two heads is mostly empty sky. */}
+          --field-sink comes from the asset's opacity profile down the frame:
+
+            rows 0-270    0%     transparent sky   <- the copy lives here
+            row  280      3%     first hat/head
+            row  360     25%     heads and shoulders
+            row  400     79%     horizon
+            row  440+   100%     solid field       <- 20.3vw
+
+          Sinking to 19vw lands the heading's baseline right where the field turns
+          solid, so the letters are cut cleanly by the crop line while the two
+          heads rise into them. The problem-strip columns end around 13.7vw, where
+          coverage is still ~5%, so they stay clear on the paper.
+
+          Re-measure both numbers if the asset changes, and measure head height as
+          "first row containing any solidly opaque pixel" — asking when some
+          percentage of a row is opaque under-reports badly, because a row holding
+          two heads is mostly empty sky. */}
       <section
         className="relative overflow-hidden bg-paper pb-[calc(var(--field-h)_-_var(--field-sink))]"
         style={
           {
-            "--field-h": "66.7vw",
-            "--field-sink": "calc(17vw + 20px)",
+            "--field-h": "33.3vw",
+            "--field-sink": "calc(19vw + 20px)",
           } as React.CSSProperties
         }
       >
