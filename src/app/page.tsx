@@ -79,7 +79,7 @@ export default function HomePage() {
 
           Both are DERIVED from the asset, not taste — re-measure if it is ever
           replaced again. object-cover scales the image by width, so a source row
-          y lands at (y / 1536) * 100vw below the band's top.
+          y lands at (y / 2172) * 100vw below the band's top.
 
           field.webp is a 2172x724 banner (3:1), so at full-bleed width it is
           724/2172 = 33.3vw tall. --field-h MUST equal that exactly: smaller and
@@ -94,10 +94,12 @@ export default function HomePage() {
             row  400     79%     horizon
             row  440+   100%     solid field       <- 20.3vw
 
-          Sinking to 19vw lands the heading's baseline right where the field turns
-          solid, so the letters are cut cleanly by the crop line while the two
-          heads rise into them. The problem-strip columns end around 13.7vw, where
-          coverage is still ~5%, so they stay clear on the paper.
+          Readability sets this, not depth. The ramp is steep — 79% opaque by
+          18.4vw, well before the solid line — so a baseline at 19-20vw buried the
+          bottom two-thirds of the letters in crops. 16.5vw puts the baseline where
+          coverage is only ~24%: the letters' feet brush the tall crops and the
+          farmers' heads rise into them, but every word stays readable. Sink deeper
+          and the heading stops being copy and becomes texture.
 
           Re-measure both numbers if the asset changes, and measure head height as
           "first row containing any solidly opaque pixel" — asking when some
@@ -108,7 +110,7 @@ export default function HomePage() {
         style={
           {
             "--field-h": "33.3vw",
-            "--field-sink": "calc(19vw + 20px)",
+            "--field-sink": "16.5vw",
           } as React.CSSProperties
         }
       >
