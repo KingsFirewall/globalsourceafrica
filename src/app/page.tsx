@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ShieldCheck, MapPin } from "lucide-react";
 import { MonoLabel } from "@/components/v2/MonoLabel";
 import { TrustStrip } from "@/components/v2/TrustStrip";
-import { HeroVisual } from "@/components/v2/hero/HeroVisual";
+import { HeroGlobe } from "@/components/v2/hero/HeroGlobe";
 import { ServiceCard } from "@/components/v2/ServiceCard";
 import { CraneSection } from "@/components/v2/scenes/CraneSection";
 import { LandingCTA } from "@/components/v2/scenes/LandingCTA";
@@ -22,25 +22,8 @@ const ARTICLES = [
 export default function HomePage() {
   return (
     <>
-      {/* 1 · HERO — single column on every screen: H1 on top, container below */}
+      {/* 1 · HERO — single column on every screen: H1 on top, globe below */}
       <section className="gsa-corrugation relative overflow-hidden bg-white text-navy">
-        {/* Earth backdrop — transparent-sky PNG, globe anchored low and
-            stretched full-bleed edge to edge, so the falling container reads
-            as tumbling down toward the planet. Wider than the viewport on
-            phones (so the globe is a real planet, not a thin band).
-            On desktop the image is full-bleed, so its HEIGHT (and therefore
-            how high the bright rim arcs) grows with the viewport width — a
-            fixed offset would clear the copy at 1440 and swallow it at 1920.
-            The vw-based offset sinks the globe in proportion to its own size,
-            so the rim always lands just below the trust strip at any width.
-            aria-hidden: pure decoration. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/scenes/earth.png"
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 z-0 max-w-none -translate-x-1/2 select-none -bottom-8 w-[145%] sm:-bottom-24 sm:w-[130%] lg:w-full lg:[bottom:calc(460px_-_44.7vw)]"
-        />
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-4 pb-0 pt-6 text-center lg:pt-8">
           <MonoLabel className="text-container">ON-GROUND SINCE 2026 · 5 AFRICAN ORIGINS</MonoLabel>
           <h1 className="gsa-heading mt-5 max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight text-navy sm:text-5xl lg:text-6xl">
@@ -61,15 +44,17 @@ export default function HomePage() {
           </div>
           <TrustStrip className="mt-8 justify-center text-steel" items={["SGS-COORDINATED", "5 ORIGINS", "48H RESPONSE", "FLAT-FEE REPORTS"]} />
 
-          {/* Container under the headline — fixed pose rolls in place, so the
-              column stays tight instead of reserving sweep room */}
-          <div className="mt-2 w-full max-w-md sm:max-w-lg lg:max-w-3xl">
-            <HeroVisual />
-          </div>
         </div>
+
+        {/* Globe welded to the hero floor — a planet rising out of the section
+            below, cropped by it, so only the top dome shows. Full-bleed and
+            sized in vw: the sphere is drawn wide enough to reach both edges at
+            the cut line, so the band never leaves gutters beside it.
+            Capped in px so it can't swallow a tall desktop viewport. */}
+        <HeroGlobe className="relative z-0 mt-6 h-[340px] w-full sm:h-[min(52vw,460px)] lg:mt-8 lg:h-[min(48vw,800px)]" />
       </section>
 
-      {/* 2 · PROBLEM STRIP — tight top padding: the hero container above sits
+      {/* 2 · PROBLEM STRIP — tight top padding: the hero globe above sits
           almost directly on these headings. The section's bottom padding is
           sized to exactly seat the full-bleed field band below, so the closing
           line reads as standing on the field without ever being overlapped. */}

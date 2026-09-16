@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { MonoLabel } from "../MonoLabel";
-import { SceneImg } from "./SceneImg";
+import { CraneDrop } from "./CraneDrop";
 
-// Closing CTA band. The animated crane/flatbed set piece was replaced by a
-// single still image (drop it at /public/scenes/landing.webp) per request —
-// simpler and photoreal. Just copy + a static hero image, no scroll animation.
+// Closing CTA band: copy and buttons, then the crane set piece welded to the
+// foot of the page — a container lowered onto a waiting trailer, paid out by
+// the reader's own scrolling.
 export function LandingCTA() {
   return (
     <section className="gsa-corrugation overflow-hidden bg-navy text-white">
-      <div className="mx-auto max-w-5xl px-4 pb-8 pt-14 text-center sm:pt-16">
+      {/* Tight padding on purpose: the copy and the scene below are pinned
+          together and have to fit one screen, so every pixel the copy gives
+          back is a bigger truck. */}
+      <div className="mx-auto max-w-5xl px-4 pb-5 pt-9 text-center sm:pt-11">
         <MonoLabel className="text-gold">THE DEAL, DELIVERED</MonoLabel>
         <h2 className="gsa-heading mx-auto mt-4 max-w-3xl text-3xl font-extrabold sm:text-4xl lg:text-5xl">
           Ready to source from Africa without the risk?
@@ -34,26 +37,11 @@ export function LandingCTA() {
           </MonoLabel>
         </div>
 
-        {/* Static closing image — no card chrome: a soft elliptical mask
-            feathers every edge into the navy section so the photo's sky
-            dissolves into the background instead of sitting in a framed card.
-            Centre biased toward the truck so it stays fully opaque while the
-            outer sky/ground melt away. */}
-        <div className="mx-auto mt-8 w-full max-w-5xl">
-          <SceneImg
-            src="/scenes/landing.webp"
-            alt="GlobalSource Africa branded truck at the container yard"
-            className="mx-auto h-auto w-full"
-            style={{
-              maskImage:
-                "radial-gradient(78% 82% at 52% 58%, #000 52%, rgba(0,0,0,0) 100%)",
-              WebkitMaskImage:
-                "radial-gradient(78% 82% at 52% 58%, #000 52%, rgba(0,0,0,0) 100%)",
-            }}
-            label="MISSING: /public/scenes/landing.webp"
-          />
-        </div>
       </div>
+
+      {/* Closing set piece, full-bleed under the copy: the gantry lowers a
+          container onto the waiting trailer as you scroll out the page. */}
+      <CraneDrop />
     </section>
   );
 }
