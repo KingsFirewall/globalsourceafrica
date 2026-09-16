@@ -8,10 +8,7 @@ import { CraneDrop } from "./CraneDrop";
 export function LandingCTA() {
   return (
     <section className="gsa-corrugation overflow-hidden bg-navy text-white">
-      {/* Tight padding on purpose: the copy and the scene below are pinned
-          together and have to fit one screen, so every pixel the copy gives
-          back is a bigger truck. */}
-      <div className="mx-auto max-w-5xl px-4 pb-5 pt-9 text-center sm:pt-11">
+      <div className="mx-auto max-w-5xl px-4 pb-8 pt-14 text-center sm:pt-16">
         <MonoLabel className="text-gold">THE DEAL, DELIVERED</MonoLabel>
         <h2 className="gsa-heading mx-auto mt-4 max-w-3xl text-3xl font-extrabold sm:text-4xl lg:text-5xl">
           Ready to source from Africa without the risk?

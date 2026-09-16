@@ -44,9 +44,44 @@ const TRAILER = {
   deckR: 0.7606, // deck length as a fraction of the whole vehicle
 };
 
-// The scene is pinned while the container comes down, so it has to fit the
-// viewport: this is the share of the window height it may occupy.
-const SCENE_OF_VIEWPORT = 0.84;
+// THE STAGE. While the container comes down the scene is pinned, and it pins
+// inside a "stage": the part of the window a visitor can actually see. That is
+// NOT innerHeight —
+//   · top:    the sticky site header covers the first ~68px;
+//   · bottom: mobile browsers overlay a toolbar that innerHeight still counts.
+// So the stage runs from the header's bottom edge to 100svh (the SMALL viewport
+// height, which excludes those toolbars). 100svh is also stable while the
+// toolbar slides in and out, so the layout doesn't churn as you scroll.
+//
+// The scene takes this share of the stage's height, and its centre pins at
+// this point down the stage — centred, so nothing sits under a bottom toolbar.
+const SCENE_OF_STAGE = 0.84;
+const PIN_AT = 0.5;
+const SCENE_MIN_H = 300;
+const SCENE_MAX_H = 780;
+
+// The yard plate, measured: its stacks occupy rows 329-566 of 1256. The plate
+// is placed so that band is always on screen — the horizon lands HORIZON_AT of
+// the way down the scene, and the plate scales up only as far as it must to
+// still cover the scene. (It used to be object-bottom, which on a wide short
+// laptop scene scaled by width and cropped from the top: exactly the rows the
+// stacks live in.)
+const YARD = { w: 2600, h: 1256, stacksTop: 329, horizon: 566 };
+const HORIZON_AT = 0.46;
+
+// Trust lines shown in the sky over the yard — PHONES AND TABLETS ONLY, where
+// the tall pinned scene leaves a band of empty sky above the stacks (desktop
+// scenes are short and wide, with no room to spare). Each line is keyed to a
+// phase of the scroll rather than a timer, so the words describe what the
+// scene is doing at that moment. Every claim here is one the site already
+// makes elsewhere — keep it that way.
+const BEATS = [
+  { label: "01 · Verified", line: "Supplier checked on the ground", from: 0, to: 0.38 },
+  { label: "02 · Inspected", line: "Independent inspector at loading", from: 0.42, to: 0.8 },
+  { label: "03 · Delivered", line: "You never ship blind.", from: 0.86, to: Infinity },
+];
+// Minimum sky height (px) worth putting words in; below this, show nothing.
+const BEATS_MIN_SKY = 110;
 // Truck width as a share of the page. The WHOLE vehicle is centred in the page
 // — not its bed under the hook — so the cab can never run off the edge on a
 // narrow screen, which is what was cropping it on phones.
@@ -60,9 +95,12 @@ const CRANE_DEPTH = 0.03;
 
 type Layout = {
   w: number;
-  vh: number;
-  copyH: number;
+  stageTop: number;
+  stageH: number;
+  pinY: number;
   h: number;
+  yard: { left: number; top: number; width: number; height: number };
+  scrimH: number;
   cx: number;
   ground: number;
   craneW: number;
@@ -83,18 +121,30 @@ type Layout = {
   cableX1R: number;
 };
 
-function computeLayout(w: number, vh: number, copyH: number): Layout {
+function computeLayout(w: number, stageTop: number, stageH: number): Layout {
   const phone = w < 640;
   const tablet = !phone && w < 1024;
   const pick = <T,>(t: { phone: T; tablet: T; desktop: T }) => (phone ? t.phone : tablet ? t.tablet : t.desktop);
 
-  // The scene takes whatever height is left once the CTA copy has had its share
-  // — the two are pinned together and must fit the window between them.
-  const h = Math.max(vh * 0.45, Math.min(vh * SCENE_OF_VIEWPORT, vh - copyH - 16));
+  const h = Math.min(SCENE_MAX_H, Math.max(SCENE_MIN_H, stageH * SCENE_OF_STAGE));
   const ground = h * 0.04;
 
-  // The truck leads: it is centred in the page and sized on its own terms.
-  const trailerW = w * pick(TRUCK_OF_WIDTH);
+  // Yard: horizon pinned HORIZON_AT down the scene; scale is the smallest that
+  // (a) spans the width, (b) reaches the top edge above the horizon, and
+  // (c) reaches the bottom edge below it. Overflow is cropped at the sides.
+  const ys = Math.max(
+    w / YARD.w,
+    (h * HORIZON_AT) / YARD.horizon,
+    (h * (1 - HORIZON_AT)) / (YARD.h - YARD.horizon)
+  );
+  const yardW = YARD.w * ys;
+  const yardTop = h * HORIZON_AT - YARD.horizon * ys;
+  // The navy fade may only darken the SKY — it stops where the stacks begin.
+  const scrimH = Math.max(0, yardTop + YARD.stacksTop * ys);
+
+  // The truck leads: it is centred in the page and sized on its own terms —
+  // but never so wide on a short, wide screen that it outgrows the scene.
+  const trailerW = Math.min(w * pick(TRUCK_OF_WIDTH), (h * 0.42) / TRAILER.ratio);
   const trailerH = trailerW * TRAILER.ratio;
   const trailerX = (w - trailerW) / 2;
   const trailerTop = h - ground - trailerH;
@@ -112,9 +162,13 @@ function computeLayout(w: number, vh: number, copyH: number): Layout {
 
   return {
     w,
-    vh,
-    copyH,
+    stageTop,
+    stageH,
+    // Viewport y (px) where the scene's centre locks while it is pinned.
+    pinY: stageTop + stageH * PIN_AT,
     h,
+    yard: { left: (w - yardW) / 2, top: yardTop, width: yardW, height: YARD.h * ys },
+    scrimH,
     cx: hangX,
     ground,
     craneW,
@@ -147,31 +201,44 @@ export function CraneDrop() {
   const truck = useRef<HTMLImageElement>(null);
   const [L, setL] = useState<Layout | null>(null);
   const panelH = L ? (PANEL.b - PANEL.t) * L.contH : 0;
+  const beats = useRef<(HTMLDivElement | null)[]>([]);
+  const showBeats = !!L && L.w < 1024 && L.scrimH >= BEATS_MIN_SKY;
 
   useLayoutEffect(() => {
     const el = wrap.current;
     if (!el) return;
+    // 100svh, measured with a probe; falls back to innerHeight where svh is
+    // unsupported (the probe then measures 0).
+    const smallViewportHeight = () => {
+      const probe = document.createElement("div");
+      probe.style.cssText = "position:fixed;top:0;left:0;width:0;height:100svh;visibility:hidden;pointer-events:none";
+      document.body.appendChild(probe);
+      const hgt = probe.offsetHeight;
+      probe.remove();
+      return hgt || window.innerHeight;
+    };
     const measure = () => {
       const w = el.getBoundingClientRect().width;
-      const vh = window.innerHeight;
-      // Everything in the band that ISN'T the scene — the CTA copy and buttons.
-      // They are pinned along with the scene, so they eat into its height.
-      const section = el.parentElement;
-      const copyH = section ? Math.max(0, section.offsetHeight - el.offsetHeight) : 0;
+      const header = document.querySelector("header");
+      const pos = header ? getComputedStyle(header).position : "";
+      const stageTop = header && (pos === "sticky" || pos === "fixed") ? header.getBoundingClientRect().height : 0;
+      const stageH = smallViewportHeight() - stageTop;
       if (w > 0) {
         setL((prev) =>
-          prev && Math.abs(prev.w - w) < 1 && Math.abs(prev.vh - vh) < 1 && Math.abs(prev.copyH - copyH) < 2
+          prev && Math.abs(prev.w - w) < 1 && Math.abs(prev.stageTop - stageTop) < 1 && Math.abs(prev.stageH - stageH) < 1
             ? prev
-            : computeLayout(w, vh, copyH)
+            : computeLayout(w, stageTop, stageH)
         );
       }
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
+    window.addEventListener("resize", measure);
     window.addEventListener("orientationchange", measure);
     return () => {
       ro.disconnect();
+      window.removeEventListener("resize", measure);
       window.removeEventListener("orientationchange", measure);
     };
   }, []);
@@ -215,6 +282,17 @@ export function CraneDrop() {
       cableL.current?.setAttribute("y2", String(y2));
       cableR.current?.setAttribute("y2", String(y2));
 
+      // Trust lines: each fades and lifts in over its phase, then out again.
+      // The last one never closes (to: Infinity), so it holds once the box lands.
+      const FADE = 0.05;
+      BEATS.forEach((b, i) => {
+        const el = beats.current[i];
+        if (!el) return;
+        const o = Math.max(0, Math.min(1, (p - b.from) / FADE, (b.to - p) / FADE));
+        el.style.opacity = String(o);
+        el.style.transform = `translateY(${(1 - o) * 10}px)`;
+      });
+
       if (shadow.current) {
         const k = Math.pow(d, 2);
         shadow.current.style.opacity = String(0.12 + 0.38 * k);
@@ -235,17 +313,18 @@ export function CraneDrop() {
         ease: "none",
         onUpdate: () => apply(proxy.p),
         scrollTrigger: {
-          // Pin the whole band — copy AND scene — so the headline and buttons
-          // stay on screen while the container comes down, instead of the
-          // reader watching a crane under an empty strip of navy.
-          trigger: wrap.current?.parentElement ?? wrap.current,
-          // PINNED, and this is the whole point: the scene locks to the screen
-          // the moment it is fully visible, and the container comes down over
-          // the next screenful of scrolling. Without the pin the scene is still
-          // sliding up while the load descends, the two cancel out, and you
-          // never see the drop — only the box already sitting on the bed.
-          start: "bottom bottom",
-          end: `+=${Math.round(L.vh * 0.9)}`,
+          // PINNED, and this is the whole point: without the pin the scene is
+          // still sliding up while the load descends, the two cancel out, and
+          // you never see the drop — only the box already on the bed.
+          //
+          // Only the SCENE pins, and it locks CENTRED in the visible stage
+          // (below the sticky header, above any mobile toolbar) rather than
+          // flush with the bottom of the window, where toolbars cover the
+          // truck. Pinning the copy too forced the scene to share one screen
+          // with it — on a short laptop that squashed the scene flat.
+          trigger: wrap.current,
+          start: `center ${Math.round(L.pinY)}px`,
+          end: `+=${Math.round(L.stageH * 0.9)}`,
           pin: true,
           anticipatePin: 1,
           scrub: 0.5,
@@ -256,29 +335,76 @@ export function CraneDrop() {
   }, [L]);
 
   return (
-    <div
-      ref={wrap}
-      aria-hidden
-      className="relative w-full select-none overflow-hidden"
-      style={{ height: L?.h ?? 380 }}
-    >
-      {/* Yard backdrop. object-bottom keeps the concrete lane on the floor of
-          the scene at every aspect; the sky is faded out by the scrim below so
-          the photo dissolves into the navy band instead of sitting in a box. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/scenes/yard.webp"
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover object-bottom"
-      />
+    // TWO elements on purpose. The outer one is what GSAP pins, and React
+    // gives it no inline style at all; the inner one carries the scene height.
+    //
+    // A pin snapshots the pinned element's inline styles and RESTORES that
+    // snapshot whenever the pin is torn down and rebuilt. When the scene height
+    // lived on the pinned element, a layout change (a phone's toolbar resizing
+    // the viewport) wrote a new height, then the pin rebuild silently put the
+    // old one back — while every position inside was computed for the new one.
+    // Bottom-anchored truck and crane then drifted away from the top-anchored
+    // container, which ended up under the truck. Keep React's styles off the
+    // element GSAP owns and the two can never disagree.
+    <div ref={wrap} aria-hidden className="relative w-full select-none">
+    <div className="relative w-full overflow-hidden" style={{ height: L?.h ?? 380 }}>
+      {/* Yard backdrop, placed by its HORIZON rather than by object-fit — see
+          YARD. The stacks band stays on screen at every aspect ratio. */}
+      {L && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src="/scenes/yard.webp"
+          alt=""
+          loading="lazy"
+          className="absolute max-w-none"
+          style={{ left: L.yard.left, top: L.yard.top, width: L.yard.width, height: L.yard.height }}
+        />
+      )}
+      {/* Side fades into the navy band, and a top fade over the sky that is
+          sized to stop where the stacks start, so it can never bury them. */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, #0B2239 0%, rgba(11,34,57,0.6) 10%, rgba(11,34,57,0.18) 24%, rgba(11,34,57,0) 38%), linear-gradient(to right, #0B2239 0%, rgba(11,34,57,0) 12%, rgba(11,34,57,0) 88%, #0B2239 100%)",
+            "linear-gradient(to right, #0B2239 0%, rgba(11,34,57,0) 12%, rgba(11,34,57,0) 88%, #0B2239 100%)",
         }}
       />
+      {L && (
+        <div
+          className="absolute inset-x-0 top-0"
+          style={{
+            height: L.scrimH,
+            background: "linear-gradient(to bottom, #0B2239 0%, rgba(11,34,57,0.55) 45%, rgba(11,34,57,0) 100%)",
+          }}
+        />
+      )}
+      {showBeats && L && (
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 px-6 text-center"
+          style={{ height: L.scrimH, paddingTop: L.scrimH * 0.16 }}
+        >
+          <div className="relative">
+            {BEATS.map((b, i) => (
+              <div
+                key={b.label}
+                ref={(el) => {
+                  beats.current[i] = el;
+                }}
+                className="absolute inset-x-0 top-0 will-change-transform"
+                style={{ opacity: i === 0 ? 1 : 0 }}
+              >
+                <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">{b.label}</div>
+                <div
+                  className="gsa-heading mx-auto mt-2 max-w-xs text-lg font-extrabold leading-tight text-white"
+                  style={{ textShadow: "0 1px 12px rgba(11,34,57,0.85)" }}
+                >
+                  {b.line}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {L && (
         <>
@@ -392,6 +518,7 @@ export function CraneDrop() {
 
         </>
       )}
+    </div>
     </div>
   );
 }
