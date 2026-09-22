@@ -53,8 +53,10 @@ function ProductCards({ products }: { products: ProductCard[] }) {
 const GREETING =
   "Hi! I'm the GlobalSource Africa assistant. I can explain our verification, sourcing and inspection services, walk you through how it works, or start a request. I can also look things up on the web. How can I help?";
 
-// Minimal renderer: turns [label](url) and bare /paths or https links into
-// anchors, preserves line breaks. Avoids pulling in a markdown dependency.
+// Minimal renderer: turns [label](url), bare /paths, https links and email
+// addresses into anchors, preserves line breaks. Avoids pulling in a markdown
+// dependency. External links open in a new tab so tapping WhatsApp or LinkedIn
+// doesn't navigate away from the conversation.
 function renderContent(raw: string) {
   // Safety net: strip any stray markdown the model emits (the panel shows raw
   // characters, so **bold**, # headings and * bullets would look broken).
@@ -65,23 +67,37 @@ function renderContent(raw: string) {
     .trim();
   const parts: React.ReactNode[] = [];
   const pattern =
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)|(https?:\/\/[^\s]+|\/product\/[^\s]+)/g;
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)|(https?:\/\/[^\s]+|\/product\/[^\s]+)|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/g;
   let last = 0;
   let m: RegExpExecArray | null;
   let key = 0;
   while ((m = pattern.exec(text)) !== null) {
     if (m.index > last) parts.push(text.slice(last, m.index));
     const label = m[1];
-    const href = m[2] ?? m[3];
+    let href = m[2] ?? m[3];
+    let trailing = "";
+    if (m[4]) {
+      href = `mailto:${m[4]}`;
+    } else if (m[3]) {
+      // A bare URL ending a sentence would otherwise swallow the full stop.
+      const t = m[3].match(/[.,;:!?)]+$/);
+      if (t) {
+        trailing = t[0];
+        href = m[3].slice(0, -trailing.length);
+      }
+    }
+    const external = /^https?:\/\//.test(href);
     parts.push(
       <a
         key={key++}
         href={href}
-        className="font-medium text-container underline underline-offset-2 hover:text-goldDark"
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className="break-all font-medium text-container underline underline-offset-2 hover:text-goldDark"
       >
-        {label ?? href}
+        {label ?? m[4] ?? href}
       </a>
     );
+    if (trailing) parts.push(trailing);
     last = pattern.lastIndex;
   }
   if (last < text.length) parts.push(text.slice(last));

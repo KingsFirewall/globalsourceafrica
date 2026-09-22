@@ -1,6 +1,7 @@
 import { SERVICES, getService } from "./services";
 import { ORIGINS, getOrigin } from "./origins";
 import { ARTICLES } from "./articles";
+import { CONTACT } from "./contact";
 
 // Turns the visitor's current URL into a briefing for the assistant, so
 // "what do I do on this page?" gets a real answer instead of the company pitch.
@@ -87,8 +88,8 @@ NEXT STEP: if they are unsure what to put in a field, tell them plainly and say 
     "/about": `The about page: why we exist, how we work, and who runs the company — Kingsley Israel, founder, based in Lagos, Nigeria. It also carries the registered entity, Global Source Africa Limited, RC 9851214.
 NEXT STEP: answer questions about who we are and our independence (we are paid by the buyer, never by suppliers).`,
 
-    "/contact": `The contact page: email info@globalsourceafrica.com, WhatsApp, LinkedIn, and our hours. We reply within 48 hours.
-NEXT STEP: they may prefer a human — give the email, and offer to take their request here instead.`,
+    "/contact": `The contact page: email ${CONTACT.email}, WhatsApp ${CONTACT.whatsappDisplay}, LinkedIn, and our hours. We reply within 48 hours.
+NEXT STEP: they may prefer a human — give the email or WhatsApp directly, and offer to take their request here instead.`,
 
     "/legal/privacy": `The privacy policy. It covers what we collect from the request and sample-report forms and how it is used.
 NEXT STEP: answer plainly. For anything legally specific, point them to info@globalsourceafrica.com.`,

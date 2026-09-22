@@ -4,6 +4,7 @@ import { tools as customTools, runTool } from "@/lib/chatbot/tools";
 import { getKnowledgeText } from "@/lib/chatbot/knowledge";
 import { SERVICES } from "@/lib/v2/services";
 import { describePage } from "@/lib/v2/page-context";
+import { CONTACT } from "@/lib/v2/contact";
 
 // The assistant runs server-side only — the API key never reaches the browser.
 export const runtime = "nodejs";
@@ -39,7 +40,11 @@ HOW IT WORKS
 4. Inspection coordinated at sampling and loading — GSA engages an independent, internationally accredited inspection firm (the SGS / Cotecna / Bureau Veritas tier) per shipment and passes their fee through at cost. GSA is not a partner or agent of any of those firms; never claim a partnership with them.
 5. You receive a decision-ready report, or a verified supplier you can transact with.
 
-Typical response time is within 48 hours. Contact: info@globalsourceafrica.com; WhatsApp and LinkedIn are available from the site footer.
+CONTACT DETAILS (give these directly whenever someone asks how to reach the team — never send them to the footer or the contact page to find them)
+- Email: ${CONTACT.email}
+- WhatsApp: ${CONTACT.whatsappDisplay} — click-to-chat link: ${CONTACT.whatsappHref}
+- LinkedIn: ${CONTACT.linkedinHref}
+Typical response time is within 48 hours, Mon–Fri. When sharing a link, write the full https URL on its own (no brackets or trailing punctuation) so it becomes clickable.
 
 HOW TO HELP
 - You are shown WHERE THE VISITOR IS on the site. Use it. When they ask "what do I do here", "what is this page", "what am I meant to fill in" or anything about "this page", answer about THAT page specifically — what it is for, what they can do on it, and the next step. Never answer a page question with the general company pitch.
@@ -173,14 +178,14 @@ export async function POST(req: Request) {
       return NextResponse.json({
         reply:
           reply ||
-          "Sorry — I couldn't answer that one. You can reach the team at info@globalsourceafrica.com.",
+          `Sorry — I couldn't answer that one. You can reach the team at ${CONTACT.email} or on WhatsApp ${CONTACT.whatsappDisplay}.`,
         products,
       });
     }
 
     return NextResponse.json({
       reply:
-        "That took longer than expected. Could you rephrase, or reach the team directly at info@globalsourceafrica.com?",
+        `That took longer than expected. Could you rephrase, or reach the team directly at ${CONTACT.email} or on WhatsApp ${CONTACT.whatsappDisplay}?`,
       products,
     });
   } catch (err) {

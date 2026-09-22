@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Mail, MessageCircle, Linkedin, Clock, ArrowRight } from "lucide-react";
 import { MonoLabel } from "@/components/v2/MonoLabel";
 import { BackToHome } from "@/components/v2/BackToHome";
+import { CONTACT } from "@/lib/v2/contact";
 
 export const metadata: Metadata = {
   title: "Contact — GlobalSource Africa",
@@ -26,17 +27,17 @@ export default function ContactPage() {
       <section className="bg-white">
         <div className="mx-auto max-w-3xl px-4 py-12">
           <div className="grid gap-4 sm:grid-cols-2">
-            <a href="mailto:info@globalsourceafrica.com" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
+            <a href={CONTACT.emailHref} className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
               <Mail className="h-5 w-5 text-container" />
-              <span className="text-navy">info@globalsourceafrica.com</span>
+              <span className="text-navy">{CONTACT.email}</span>
             </a>
-            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
+            <a href={CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
               <MessageCircle className="h-5 w-5 text-container" />
-              <span className="text-navy">WhatsApp click-to-chat</span>
+              <span className="text-navy">WhatsApp {CONTACT.whatsappDisplay}</span>
             </a>
-            <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
-              <Linkedin className="h-5 w-5 text-container" />
-              <span className="text-navy">LinkedIn</span>
+            <a href={CONTACT.linkedinHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5 hover:border-container">
+              <Linkedin className="h-5 w-5 shrink-0 text-container" />
+              <span className="min-w-0 break-words text-navy">LinkedIn · GlobalSource Africa</span>
             </a>
             <div className="flex items-center gap-3 rounded-xl border border-steel/20 bg-paper p-5">
               <Clock className="h-5 w-5 text-container" />

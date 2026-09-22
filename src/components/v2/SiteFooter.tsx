@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mail, MessageCircle, Linkedin } from "lucide-react";
 import { MonoLabel } from "./MonoLabel";
+import { CONTACT } from "@/lib/v2/contact";
 
 // v2 footer — contact channels, entity line (Nigeria), and a mono
 // container-plate easter egg. Hidden on admin/auth.
@@ -58,17 +59,17 @@ export function SiteFooter() {
           <MonoLabel className="text-white/50">Contact</MonoLabel>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <a href="mailto:info@globalsourceafrica.com" className="flex items-center gap-2 hover:text-white">
-                <Mail className="h-4 w-4" /> info@globalsourceafrica.com
+              <a href={CONTACT.emailHref} className="flex items-center gap-2 hover:text-white">
+                <Mail className="h-4 w-4" /> {CONTACT.email}
               </a>
             </li>
             <li>
-              <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white">
-                <MessageCircle className="h-4 w-4" /> WhatsApp
+              <a href={CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white">
+                <MessageCircle className="h-4 w-4" /> WhatsApp {CONTACT.whatsappDisplay}
               </a>
             </li>
             <li>
-              <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white">
+              <a href={CONTACT.linkedinHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white">
                 <Linkedin className="h-4 w-4" /> LinkedIn
               </a>
             </li>
