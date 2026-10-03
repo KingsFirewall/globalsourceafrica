@@ -15,6 +15,8 @@ export const charcoalSpecs: ShareableFormDef = {
   note: "Fields marked * are required. Unsure about a technical detail? Leave it blank or write “To be advised”.",
   submitLabel: "Send specifications",
   doneTitle: "Specifications received — thank you",
+  chat:
+    "The detailed charcoal spec sheet (moisture, ash, fixed carbon, packaging, incoterms, payment terms). Only for buyers who have already sent the charcoal inquiry, or who say they have full specs ready — otherwise give the quick charcoal inquiry first.",
   steps: [
     {
       title: "Your inquiry",

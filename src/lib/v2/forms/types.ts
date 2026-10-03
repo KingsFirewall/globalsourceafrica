@@ -53,6 +53,9 @@ export type ShareableFormDef = {
   submitNote?: string; // small print beside the final submit button
   doneTitle?: string; // default "Inquiry received — thank you"
   steps: FormStep[];
+  // When the chat assistant should hand out this form's link. Forms without
+  // it are never offered in chat.
+  chat?: string;
   // A follow-up form offered after this one is sent: on the thank-you screen,
   // in the buyer's confirmation email, and as a ready-to-send WhatsApp link in
   // the team's notification. `carry` lists answers (by key) prefilled into it;

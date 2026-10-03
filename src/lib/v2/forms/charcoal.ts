@@ -13,6 +13,8 @@ export const charcoal: ShareableFormDef = {
     "Tell us what charcoal you need — we match international buyers with verified Nigerian suppliers. Takes 2 minutes; we reply within 48 hours.",
   note: "Fields marked * are required. Not sure about something? Leave it blank — we'll go through it with you.",
   submitNote: "This is an inquiry, not an order — no commitment.",
+  chat:
+    "We source charcoal from Nigeria for international buyers — hardwood lump, briquettes and coconut-shell, for BBQ/restaurant, shisha, industrial or retail resale. Give this link whenever someone wants to buy, import, get a quote or a price for charcoal, or asks for the charcoal form. It takes about 2 minutes and asks what they need (type, use, quantity, destination port) and who they are.",
   steps: [
     {
       title: "What you need",

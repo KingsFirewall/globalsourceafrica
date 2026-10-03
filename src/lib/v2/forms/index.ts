@@ -9,3 +9,10 @@ export const FORMS: ShareableFormDef[] = [charcoal, charcoalSpecs];
 export function getForm(slug: string): ShareableFormDef | undefined {
   return FORMS.find((f) => f.slug === slug);
 }
+
+/** Lines for the chat assistant's prompt: each form it may hand out, and when. */
+export function formsForChat(baseUrl: string): string {
+  return FORMS.filter((f) => f.chat)
+    .map((f) => `- ${f.name}: ${baseUrl}/inquiry/${f.slug}\n  ${f.chat}`)
+    .join("\n");
+}
