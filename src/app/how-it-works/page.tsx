@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const STEPS = [
-  { n: "01", t: "Submit your request", d: "Tell us the product, quantity, destination and specs — or name a supplier you want checked. No login, no obligation. It takes a couple of minutes." },
+  { n: "01", t: "Submit your request", d: "Tell us the product, quantity, destination and specs — or name a supplier you want checked. No login, no obligation. The form takes a couple of minutes to fill in." },
   { n: "02", t: "We scope and quote our fee", d: "We confirm exactly what we'll do and a flat fee, upfront. Any pass-through cost (an accredited inspector, travel to a remote region) is quoted before it's incurred. You approve before we start." },
   { n: "03", t: "Ground work begins", d: "Our people in-country run the checks: company registry and legal-entity confirmation, export licenses and permits, a physical or video site visit with dated photos, and reference and trade-history calls." },
   { n: "04", t: "Inspection coordinated", d: "Where you're buying, we engage an independent accredited inspector — the SGS / Cotecna tier — at sampling and at loading. You see the goods and the sealed container before anything sails — you never ship blind." },

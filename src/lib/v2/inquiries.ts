@@ -58,7 +58,7 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
       ? `https://wa.me/${buyerDigits}?text=${encodeURIComponent(
           `Hi ${input.next_prefill.contact || "there"}, thank you for your inquiry with GlobalSource Africa (${ref}). ` +
             `So we can match the right suppliers and quote accurately, could you fill in our ${nextDef.name.toLowerCase()}? ` +
-            `It takes about 5 minutes and your details are already filled in: ${nextLink}`
+            `The form takes about 5 minutes to fill in, and your details are already entered: ${nextLink}`
         )}`
       : null;
   const followUpHtml = nextLink
@@ -116,7 +116,7 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
          <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0B2239;">If anything changes in the meantime, just reply to this email.</p>
          ${
            nextLink
-             ? `<p style="margin:0 0 4px;font-size:14px;line-height:1.6;color:#0B2239;"><strong>Have your detailed specs ready?</strong> Adding them now helps us quote faster — optional, about 5 minutes, and your details are already filled in.</p>
+             ? `<p style="margin:0 0 4px;font-size:14px;line-height:1.6;color:#0B2239;"><strong>Have your detailed specs ready?</strong> Adding them now helps us quote faster — optional, the form takes about 5 minutes to fill in, and your details are already entered.</p>
                 ${button(escapeHtml(nextLink), "Add detailed specs")}`
              : button(siteUrl() + "/sample-report", "See a sample report")
          }`
@@ -125,7 +125,7 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
 
 Your reference is ${ref}. We review every request and reply within 48 hours (GMT to GMT+3).
 ${nextLink ? `
-Have your detailed specs ready? Adding them helps us quote faster (optional, about 5 minutes):
+Have your detailed specs ready? Adding them helps us quote faster (optional — the form takes about 5 minutes to fill in):
 ${nextLink}
 ` : ""}
 — GlobalSource Africa`,

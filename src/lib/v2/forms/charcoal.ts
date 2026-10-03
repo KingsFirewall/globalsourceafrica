@@ -8,13 +8,13 @@ export const charcoal: ShareableFormDef = {
   label: "Charcoal import · Buyer inquiry",
   title: "Tell us what you need",
   intro:
-    "Tell us what you're looking for and we'll match you with verified Nigerian charcoal suppliers. It takes about 2 minutes.",
+    "Tell us what you're looking for and we'll match you with verified Nigerian charcoal suppliers. The form takes about 2 minutes to fill in.",
   metaDescription:
-    "Tell us what charcoal you need — we match international buyers with verified Nigerian suppliers. Takes 2 minutes; we reply within 48 hours.",
+    "Tell us what charcoal you need — we match international buyers with verified Nigerian suppliers. The form takes about 2 minutes to fill in, and we reply within 48 hours.",
   note: "Fields marked * are required. Not sure about something? Leave it blank — we'll go through it with you.",
   submitNote: "This is an inquiry, not an order — no commitment.",
   chat:
-    "We source charcoal from Nigeria for international buyers — hardwood lump, briquettes and coconut-shell, for BBQ/restaurant, shisha, industrial or retail resale. Give this link whenever someone wants to buy, import, get a quote or a price for charcoal, or asks for the charcoal form. It takes about 2 minutes and asks what they need (type, use, quantity, destination port) and who they are.",
+    "We source charcoal from Nigeria for international buyers — hardwood lump, briquettes and coconut-shell, for BBQ/restaurant, shisha, industrial or retail resale. Give this link whenever someone wants to buy, import, get a quote or a price for charcoal, or asks for the charcoal form. The form takes about 2 minutes to fill in and asks what they need (type, use, quantity, destination port) and who they are. If you mention the time, make clear it is the time to fill in the form — the team replies within 48 hours, so never suggest a quote comes back in minutes.",
   steps: [
     {
       title: "What you need",
@@ -84,6 +84,6 @@ export const charcoal: ShareableFormDef = {
     carry: ["company", "contact", "email", "phone"],
     title: "Have your detailed specs ready?",
     blurb:
-      "Add quality limits, packaging and delivery terms now and we can quote faster. Optional — about 5 minutes, and your details are already filled in.",
+      "Add quality limits, packaging and delivery terms now and we can quote faster. Optional — the form takes about 5 minutes to fill in, and your contact details are already entered.",
   },
 };
