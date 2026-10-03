@@ -59,10 +59,7 @@ export default function InquiryFormPage({ params }: { params: { slug: string } }
       </section>
 
       <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
-        <p className="mb-5 text-sm text-steel">
-          Fields marked <span className="font-semibold text-container">*</span> are required. Unsure about a
-          technical detail? Enter &ldquo;To be advised&rdquo; — we&apos;ll confirm it through samples.
-        </p>
+        <p className="mb-5 text-sm text-steel">{def.note}</p>
 
         <ShareableForm def={def} />
 

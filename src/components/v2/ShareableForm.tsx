@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Copy, Mail, MessageCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, ClipboardList, Copy, Mail, MessageCircle } from "lucide-react";
 import { MonoLabel } from "./MonoLabel";
 import { submitInquiry } from "@/lib/v2/inquiries";
 import { CONTACT } from "@/lib/v2/contact";
-import { isHeading, type FormField, type ShareableFormDef } from "@/lib/v2/forms/types";
-
-type Values = Record<string, string | string[]>;
+import { isHeading, isVisible, type FormField, type FormValues as Values, type ShareableFormDef } from "@/lib/v2/forms/types";
 
 const inputCls =
   "mt-1 w-full rounded-lg border border-steel/25 bg-white px-4 py-2.5 text-navy placeholder:text-steel/60 focus:border-container focus:outline-none focus:ring-2 focus:ring-container/15";
@@ -33,7 +31,7 @@ function buildSummary(def: ShareableFormDef, values: Values, ref?: string) {
   if (ref) lines.push(`Reference: ${ref}`);
   def.steps.forEach((step, i) => {
     const answered = step.items
-      .filter((it): it is FormField => !isHeading(it))
+      .filter((it): it is FormField => !isHeading(it) && isVisible(it, values))
       .map((f) => [answerLabel(f), answerValue(f, values)] as const)
       .filter(([, v]) => v);
     if (!answered.length) return;
@@ -113,6 +111,12 @@ export function ShareableForm({ def }: { def: ShareableFormDef }) {
   const emailHref = `${CONTACT.emailHref}?subject=${encodeURIComponent(
     `${def.name} — ${companyName}${ref ? ` (${ref})` : ""}`
   )}&body=${encodeURIComponent(summary)}`;
+  // Answers carried into the follow-up form, so the buyer doesn't retype them.
+  const nextPrefill = Object.fromEntries(
+    (def.next?.carry ?? []).map((k) => [k, asText(values[k])]).filter(([, v]) => v)
+  );
+  const nextHref =
+    def.next && ref ? `/inquiry/${def.next.slug}?${new URLSearchParams({ ref, ...nextPrefill })}` : null;
 
   async function copy() {
     try {
@@ -132,13 +136,13 @@ export function ShareableForm({ def }: { def: ShareableFormDef }) {
     const all = fields(def);
     const mapped = (m: FormField["maps"]) => {
       const f = all.find((x) => x.maps === m);
-      return f ? asText(values[f.key]) : "";
+      return f && isVisible(f, values) ? asText(values[f.key]) : "";
     };
     // Buyer columns travel separately; everything else goes in the payload,
     // keyed by its human label so the team email reads as-is.
     const payload: Record<string, string> = {};
     for (const f of all) {
-      if (f.maps) continue;
+      if (f.maps || !isVisible(f, values)) continue;
       const v = answerValue(f, values);
       if (v) payload[answerLabel(f)] = v;
     }
@@ -152,6 +156,9 @@ export function ShareableForm({ def }: { def: ShareableFormDef }) {
       country: mapped("country") || null,
       email: mapped("email"),
       whatsapp: mapped("whatsapp") || null,
+      parent_ref: mapped("parent_ref") || null,
+      next_form: def.next?.slug ?? null,
+      next_prefill: nextPrefill,
       fax,
     });
     setBusy(false);
@@ -168,13 +175,24 @@ export function ShareableForm({ def }: { def: ShareableFormDef }) {
       <div ref={topRef} className="scroll-mt-6 rounded-2xl border border-steel/20 bg-white p-6 shadow-sm sm:p-10">
         <CheckCircle2 className="h-11 w-11 text-cleared" />
         <h2 ref={headingRef} tabIndex={-1} className="gsa-heading mt-4 text-2xl font-bold text-navy outline-none">
-          Inquiry received — thank you
+          {def.doneTitle ?? "Inquiry received — thank you"}
         </h2>
         <MonoLabel as="p" className="mt-3 text-container">REF: {ref}</MonoLabel>
         <p className="mt-4 max-w-xl text-steel">
           Our team reviews every inquiry personally and replies within 48 hours (GMT to GMT+3). A confirmation
           is on its way to your inbox — just reply to it if anything changes.
         </p>
+        {nextHref && def.next && (
+          <div className="mt-6 rounded-xl border border-gold/50 bg-gold/10 p-5">
+            <p className="flex items-center gap-2 font-semibold text-navy">
+              <ClipboardList className="h-5 w-5 text-goldDark" /> {def.next.title}
+            </p>
+            <p className="mt-1.5 text-sm text-navy/75">{def.next.blurb}</p>
+            <a href={nextHref} className="mt-4 inline-flex items-center gap-2 rounded-full bg-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-navy/90">
+              Add detailed specs <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        )}
         <p className="mt-6 text-sm font-semibold text-navy">Want to reach us faster?</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1f9d58] px-5 py-3 text-sm font-semibold text-white hover:bg-[#1a8a4c]">
@@ -223,7 +241,7 @@ export function ShareableForm({ def }: { def: ShareableFormDef }) {
 
         <div className="mt-6 grid gap-x-4 gap-y-5 sm:grid-cols-2">
           {current.items.map((item, i) =>
-            isHeading(item) ? (
+            !isHeading(item) && !isVisible(item, values) ? null : isHeading(item) ? (
               <h3 key={`h${i}`} className="border-t border-steel/15 pt-5 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-container sm:col-span-2">
                 {item.heading}
               </h3>
@@ -271,9 +289,10 @@ export function ShareableForm({ def }: { def: ShareableFormDef }) {
               last ? "bg-container hover:bg-container/90" : "bg-navy hover:bg-navy/90"
             }`}
           >
-            {last ? (busy ? "Sending…" : "Submit inquiry") : "Continue"} <ArrowRight className="h-4 w-4" />
+            {last ? (busy ? "Sending…" : def.submitLabel ?? "Submit inquiry") : "Continue"} <ArrowRight className="h-4 w-4" />
           </button>
         </div>
+        {last && def.submitNote && <p className="mt-2 text-center text-xs text-steel sm:text-right">{def.submitNote}</p>}
       </form>
     </div>
   );
