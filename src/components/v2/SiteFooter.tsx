@@ -10,7 +10,7 @@ import { CONTACT } from "@/lib/v2/contact";
 // container-plate easter egg. Hidden on admin/auth.
 export function SiteFooter() {
   const pathname = usePathname();
-  if (pathname?.startsWith("/admin") || pathname?.startsWith("/auth")) return null;
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/auth") || pathname?.startsWith("/inquiry")) return null;
 
   return (
     <footer className="gsa-corrugation border-t border-white/10 bg-navy text-white/80">

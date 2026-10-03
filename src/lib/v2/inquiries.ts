@@ -11,6 +11,9 @@ const schema = z.object({
   country: z.string().trim().max(120).optional().nullable(),
   email: z.string().trim().email("Enter a valid email."),
   whatsapp: z.string().trim().max(40).optional().nullable(),
+  // Which shareable form (/inquiry/<slug>) sent it, e.g. "Charcoal import
+  // inquiry". Absent for /request.
+  source: z.string().trim().max(120).optional().nullable(),
   // Honeypot — must stay empty. Bots fill hidden fields.
   fax: z.string().max(0).optional().default(""),
 });
@@ -36,6 +39,7 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
   const detail: [string, string][] = [
     ["Reference", ref],
     ["Service", input.service_type],
+    ...(input.source ? [["Form", input.source] as [string, string]] : []),
     ["Email", input.email],
     ["Company", input.company || "—"],
     ["Country", input.country || "—"],
@@ -52,9 +56,9 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
     sendEmail({
       to: notifyInbox(),
       replyTo: input.email,
-      subject: `New inquiry ${ref} · ${input.service_type}`,
+      subject: `New inquiry ${ref} · ${input.source || input.service_type}`,
       html: shell(
-        `New ${input.service_type} inquiry`,
+        input.source ? `New ${escapeHtml(input.source.toLowerCase())}` : `New ${input.service_type} inquiry`,
         rows(detail) +
           `<p style="margin:16px 0 0;font-size:13px;color:#6B7683;">Reply to this email to answer ${escapeHtml(
             input.email
@@ -100,7 +104,8 @@ export async function submitInquiry(raw: InquiryInput): Promise<InquiryResult> {
     const { error } = await db.from("inquiries").insert({
       ref,
       service_type: input.service_type,
-      payload: input.payload,
+      // No dedicated column for the source form; keep it with the answers.
+      payload: input.source ? { form: input.source, ...input.payload } : input.payload,
       company: input.company || null,
       country: input.country || null,
       email: input.email,

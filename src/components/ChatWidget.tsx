@@ -283,7 +283,8 @@ export function ChatWidget() {
     }
   }
 
-  if (!enabled) return null;
+  // The launcher would sit on top of the sticky Continue bar on share-link forms.
+  if (!enabled || pathname?.startsWith("/inquiry")) return null;
 
   return (
     <>

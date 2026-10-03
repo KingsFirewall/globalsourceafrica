@@ -17,8 +17,8 @@ export function SiteNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // Admin / auth keep their own chrome.
-  if (pathname?.startsWith("/admin") || pathname?.startsWith("/auth")) return null;
+  // Admin / auth keep their own chrome; /inquiry share links are deliberately bare.
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/auth") || pathname?.startsWith("/inquiry")) return null;
 
   return (
     <header className="sticky top-0 z-50 border-b border-steel/15 bg-white/90 backdrop-blur">

@@ -1,0 +1,153 @@
+import type { ShareableFormDef } from "./types";
+
+export const charcoal: ShareableFormDef = {
+  slug: "charcoal",
+  name: "Charcoal import inquiry",
+  label: "Charcoal import · Buyer inquiry",
+  title: "Tell us what you need",
+  intro:
+    "Complete this inquiry so we can assess suitable Nigerian charcoal suppliers and prepare a relevant proposal. It takes about 5 minutes.",
+  metaDescription:
+    "Submit your Nigerian charcoal sourcing requirements to GlobalSource Africa. We reply within 48 hours.",
+  steps: [
+    {
+      title: "Buyer and company information",
+      items: [
+        { key: "company", label: "Company / trading name", required: true, maps: "company" },
+        { key: "contact", label: "Contact person", required: true },
+        { key: "job_title", label: "Job title / role" },
+        { key: "country", label: "Country of registration", required: true, maps: "country" },
+        { key: "email", label: "Business email", type: "email", required: true, maps: "email", placeholder: "you@company.com" },
+        { key: "phone", label: "Phone / WhatsApp", type: "tel", required: true, maps: "whatsapp", placeholder: "Include country code" },
+        { key: "website", label: "Website / business page", type: "url", placeholder: "https://" },
+        { key: "registration", label: "Company registration number" },
+        {
+          key: "role",
+          label: "Your role in this transaction",
+          type: "radio",
+          required: true,
+          options: ["Importer / end buyer", "Distributor / wholesaler", "Broker / intermediary", "Other"],
+        },
+        {
+          key: "experience",
+          label: "Have you imported charcoal before?",
+          type: "radio",
+          required: true,
+          options: ["Yes", "No"],
+        },
+      ],
+    },
+    {
+      title: "Discovery and product overview",
+      items: [
+        {
+          key: "found_us",
+          label: "How did you hear about GlobalSource Africa?",
+          type: "radio",
+          required: true,
+          options: ["Referral", "LinkedIn", "Instagram", "Google / web search", "Other"],
+        },
+        { key: "referrer", label: "Referring person / company" },
+        { key: "source_details", label: "Profile, page, event or source details" },
+        { heading: "Product requested" },
+        {
+          key: "format",
+          label: "Charcoal format",
+          type: "radio",
+          required: true,
+          options: ["Hardwood lump charcoal", "Charcoal briquettes", "Coconut-shell charcoal", "Other"],
+        },
+        {
+          key: "use",
+          label: "Intended use",
+          type: "radio",
+          required: true,
+          options: ["BBQ / restaurant", "Shisha / hookah", "Industrial", "Retail resale"],
+        },
+        { key: "description", label: "Raw material, wood species, shape or product description", type: "textarea" },
+      ],
+    },
+    {
+      title: "Quality specifications",
+      help: "Enter your required limits or leave optional items blank. Final specifications can be confirmed through samples and inspection.",
+      items: [
+        { key: "size", label: "Lump / briquette size" },
+        { key: "moisture", label: "Moisture — maximum %" },
+        { key: "ash", label: "Ash content — maximum %" },
+        { key: "fixed_carbon", label: "Fixed carbon — minimum %" },
+        { key: "volatile", label: "Volatile matter %" },
+        { key: "calorific", label: "Calorific value" },
+        { key: "burn_time", label: "Minimum burn time" },
+        { key: "fines", label: "Permitted dust / fines %" },
+        {
+          key: "performance",
+          label: "Performance preferences",
+          type: "checkboxes",
+          options: ["Low smoke", "Low sparking", "Low odor", "Long burning"],
+        },
+        { key: "other_specs", label: "Other specifications or acceptance criteria", type: "textarea" },
+      ],
+    },
+    {
+      title: "Quantity, packaging and delivery",
+      items: [
+        { key: "initial_qty", label: "Initial / trial quantity (MT)", required: true },
+        { key: "recurring_qty", label: "Expected recurring quantity (MT/month)" },
+        { key: "frequency", label: "Purchase frequency" },
+        { key: "container", label: "Preferred container / shipment size" },
+        { heading: "Packaging and branding" },
+        { key: "bag_weight", label: "Net weight per bag / carton", required: true },
+        { key: "pack_material", label: "Preferred packaging material" },
+        {
+          key: "branding",
+          label: "Branding requirement",
+          type: "radio",
+          options: ["Supplier standard packaging", "Plain / unbranded", "Private label / buyer brand"],
+        },
+        { key: "pack_details", label: "Packaging, printing, barcode or pallet instructions", type: "textarea" },
+        { heading: "Delivery" },
+        { key: "port", label: "Destination port and country", required: true },
+        { key: "arrival", label: "Preferred arrival date / window", required: true },
+        {
+          key: "incoterm",
+          label: "Preferred quotation term",
+          type: "radio",
+          options: ["EXW", "FOB", "CFR", "CIF", "Not sure — please advise"],
+        },
+        { key: "forwarder", label: "Freight forwarder / customs broker" },
+        { key: "documents", label: "Required certificates / documents" },
+      ],
+    },
+    {
+      title: "Commercial terms and confirmation",
+      items: [
+        { key: "currency", label: "Quotation currency", required: true, defaultValue: "USD" },
+        { key: "target_price", label: "Target price / budget (optional)" },
+        {
+          key: "payment",
+          label: "Preferred payment method",
+          type: "radio",
+          options: ["Letter of Credit", "Bank transfer", "Cash against documents", "To be discussed"],
+        },
+        {
+          key: "verification",
+          label: "Quality verification",
+          type: "checkboxes",
+          options: ["Pre-order sample required", "Third-party inspection required", "Supplier report acceptable"],
+        },
+        { key: "notes", label: "Additional commercial terms or comments", type: "textarea" },
+        { heading: "Buyer confirmation" },
+        { key: "auth_name", label: "Authorized representative", required: true },
+        { key: "auth_title", label: "Position / title" },
+        { key: "confirm_date", label: "Date", type: "date", required: true },
+        {
+          key: "confirmed",
+          label:
+            "I confirm that the information is accurate and understand this is a sourcing inquiry, not a purchase order or final contract.",
+          type: "confirm",
+          required: true,
+        },
+      ],
+    },
+  ],
+};
