@@ -587,3 +587,24 @@ export async function deleteTestimonial(id: string): Promise<ActionResult> {
     return { ok: false, error: e.message ?? "Failed to delete testimonial" };
   }
 }
+
+// ---- Inquiries (v2 /request + /inquiry/<slug> forms) ------------------------
+
+const INQUIRY_STATUSES = ["new", "scoped", "quoted", "active", "delivered", "closed"];
+
+export async function updateInquiryStatus(ref: string, status: string): Promise<ActionResult> {
+  try {
+    await assertStaff();
+    if (!INQUIRY_STATUSES.includes(status)) {
+      return { ok: false, error: "Invalid status" };
+    }
+    const db = createSupabaseAdminClient();
+    const { error } = await db.from("inquiries").update({ status }).eq("ref", ref);
+    if (error) return { ok: false, error: error.message };
+    revalidatePath("/admin/inquiries");
+    revalidatePath(`/admin/inquiries/${ref}`);
+    return { ok: true, id: ref };
+  } catch (e: any) {
+    return { ok: false, error: e.message ?? "Failed to update inquiry" };
+  }
+}

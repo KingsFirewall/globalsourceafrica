@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { Package, ShoppingBag, Store, Clock, FileText } from "lucide-react";
+import { Package, ShoppingBag, Store, Clock, FileText, Inbox } from "lucide-react";
 import { getDashboardCounts, getNewQuoteCount } from "@/lib/admin/data";
+import { getNewInquiryCount } from "@/lib/admin/inquiries";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [c, newQuotes] = await Promise.all([
+  const [c, newQuotes, newInquiries] = await Promise.all([
     getDashboardCounts(),
     getNewQuoteCount(),
+    getNewInquiryCount(),
   ]);
   const statuses = ["placed", "confirmed", "shipped", "delivered", "refunded"];
 
@@ -17,6 +19,13 @@ export default async function AdminDashboard() {
       <p className="mt-1 text-sm text-sub">Overview of the marketplace.</p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-3">
+        <Stat
+          label="New inquiries"
+          value={newInquiries}
+          icon={<Inbox className="h-5 w-5" />}
+          href="/admin/inquiries?status=new"
+          highlight={newInquiries > 0}
+        />
         <Stat label="Products" value={c.products} icon={<Package className="h-5 w-5" />} href="/admin/products" />
         <Stat label="Orders" value={c.orders} icon={<ShoppingBag className="h-5 w-5" />} href="/admin/orders" />
         <Stat

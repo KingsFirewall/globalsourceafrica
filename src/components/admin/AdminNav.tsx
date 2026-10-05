@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
+  Inbox,
   Package,
   ShoppingBag,
   Store,
@@ -20,6 +21,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/quotes", label: "Quotes", icon: FileText },

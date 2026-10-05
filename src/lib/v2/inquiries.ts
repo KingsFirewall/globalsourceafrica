@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { emailConfigured, sendEmail, notifyInbox, shell, rows, button, escapeHtml, siteUrl } from "./email";
-import { getForm } from "./forms";
+import { followUpFor } from "./forms";
 
 const schema = z.object({
   service_type: z.enum(["verification", "discovery", "inspection", "sourcing", "unsure"]),
@@ -28,6 +28,11 @@ const schema = z.object({
 export type InquiryInput = z.input<typeof schema>;
 export type InquiryResult = { ok: true; ref: string } | { ok: false; error: string };
 
+// What visitors see when something breaks on our side. The real cause goes to
+// the server log — never to the page (a raw "supabaseUrl is required" once
+// reached a buyer's screen).
+const FRIENDLY_ERROR = "Something went wrong on our side.";
+
 async function nextRef(db: ReturnType<typeof createSupabaseAdminClient>): Promise<string> {
   const year = new Date().getFullYear();
   const { count } = await db
@@ -37,36 +42,42 @@ async function nextRef(db: ReturnType<typeof createSupabaseAdminClient>): Promis
   return `GSA-${year}-${seq}`;
 }
 
-// Notify the team and acknowledge the buyer. Best-effort by design: the inquiry
-// is already in the database by this point, so a mail failure must never surface
-// to the visitor as a form error.
-async function sendEmails(ref: string, input: z.infer<typeof schema>) {
-  if (!emailConfigured()) return;
+// Reference for a lead the database couldn't take. Still unique and quotable
+// by the buyer; the E marks it as email-only when it turns up later.
+function emailOnlyRef(): string {
+  return `GSA-${new Date().getFullYear()}-E${Date.now().toString(36).slice(-5).toUpperCase()}`;
+}
 
-  // Follow-up form link, prefilled with this reference and the buyer's details.
-  const nextDef = input.next_form ? getForm(input.next_form) : undefined;
-  const nextLink = nextDef
-    ? `${siteUrl()}/inquiry/${nextDef.slug}?${new URLSearchParams({ ref, ...input.next_prefill })}`
-    : null;
+// Notify the team and acknowledge the buyer. Returns whether the TEAM email
+// went out: when the database write failed, that email is the only copy of the
+// lead, so the caller needs to know. `unsaved` carries the database error into
+// the team email so nobody assumes it is in Supabase.
+async function sendEmails(
+  ref: string,
+  input: z.infer<typeof schema>,
+  unsaved: string | null
+): Promise<boolean> {
+  if (!emailConfigured()) return false;
 
-  // One tap for the team to send that link to the buyer on WhatsApp once
-  // they've qualified the lead. Needs an international number (the form asks
-  // for the country code); wa.me wants digits only.
-  const buyerDigits = (input.whatsapp || "").replace(/\D/g, "").replace(/^00/, "");
-  const sendSpecsHref =
-    nextDef && nextLink && buyerDigits.length >= 8
-      ? `https://wa.me/${buyerDigits}?text=${encodeURIComponent(
-          `Hi ${input.next_prefill.contact || "there"}, thank you for your inquiry with GlobalSource Africa (${ref}). ` +
-            `So we can match the right suppliers and quote accurately, could you fill in our ${nextDef.name.toLowerCase()}? ` +
-            `The form takes about 5 minutes to fill in, and your details are already entered: ${nextLink}`
-        )}`
-      : null;
-  const followUpHtml = nextLink
+  // Follow-up form link (e.g. the spec sheet), prefilled with this reference
+  // and the buyer's details, plus a one-tap WhatsApp send for the team.
+  const follow = followUpFor(input.next_form, {
+    baseUrl: siteUrl(),
+    ref,
+    prefill: input.next_prefill,
+    whatsapp: input.whatsapp,
+  });
+  const followUpHtml = follow
     ? `<div style="margin:20px 0 0;padding:16px;border:1px solid #e4e1da;border-radius:10px;background:#F6F4EF;">
-        <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0B2239;">Send the ${escapeHtml(nextDef!.name.toLowerCase())}</p>
+        <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0B2239;">Send the ${escapeHtml(follow.nextDef.name.toLowerCase())}</p>
         <p style="margin:0 0 8px;font-size:13px;line-height:1.5;color:#6B7683;">Once you've qualified this buyer, send them the detailed form — prefilled with this reference and their details.</p>
-        ${sendSpecsHref ? button(escapeHtml(sendSpecsHref), "Send on WhatsApp") : ""}
-        <p style="margin:10px 0 0;font-size:12px;color:#6B7683;word-break:break-all;">Or copy the link: ${escapeHtml(nextLink)}</p>
+        ${follow.whatsappHref ? button(escapeHtml(follow.whatsappHref), "Send on WhatsApp") : ""}
+        <p style="margin:10px 0 0;font-size:12px;color:#6B7683;word-break:break-all;">Or copy the link: ${escapeHtml(follow.link)}</p>
+      </div>`
+    : "";
+  const unsavedHtml = unsaved
+    ? `<div style="margin:0 0 16px;padding:12px 14px;border-radius:8px;background:#FDECEA;color:#8A1C12;font-size:13px;line-height:1.5;">
+        <strong>Not saved to the database</strong> — this email is the only copy, keep it. Reason: ${escapeHtml(unsaved)}
       </div>`
     : "";
 
@@ -85,24 +96,29 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
   ];
   const plain = detail.map(([k, v]) => `${k}: ${v}`).join("\n");
 
-  await Promise.allSettled([
+  // sendEmail never rejects, so Promise.all is safe and gives us the results.
+  const [team] = await Promise.all([
     // replyTo is the buyer, so hitting Reply in the inbox answers them directly
     // instead of copy-pasting the address out of the body.
     sendEmail({
       to: notifyInbox(),
       replyTo: input.email,
-      subject: `New inquiry ${ref} · ${input.source || input.service_type}${
+      subject: `${unsaved ? "[NOT SAVED] " : ""}New inquiry ${ref} · ${input.source || input.service_type}${
         input.parent_ref ? ` · follows ${input.parent_ref}` : ""
       }`,
       html: shell(
         input.source ? `New ${escapeHtml(input.source.toLowerCase())}` : `New ${input.service_type} inquiry`,
-        rows(detail) +
+        unsavedHtml +
+          rows(detail) +
           `<p style="margin:16px 0 0;font-size:13px;color:#6B7683;">Reply to this email to answer ${escapeHtml(
             input.email
           )} directly.</p>` +
           followUpHtml
       ),
-      text: plain + (nextLink ? `\n\nSend the ${nextDef!.name.toLowerCase()}: ${nextLink}` : ""),
+      text:
+        (unsaved ? `NOT SAVED TO THE DATABASE — this email is the only copy. Reason: ${unsaved}\n\n` : "") +
+        plain +
+        (follow ? `\n\nSend the ${follow.nextDef.name.toLowerCase()}: ${follow.link}` : ""),
     }),
     sendEmail({
       to: input.email,
@@ -115,38 +131,43 @@ async function sendEmails(ref: string, input: z.infer<typeof schema>) {
         )}</strong>. Someone on our team reviews every request personally and replies within 48 hours (GMT to GMT+3).</p>
          <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0B2239;">If anything changes in the meantime, just reply to this email.</p>
          ${
-           nextLink
+           follow
              ? `<p style="margin:0 0 4px;font-size:14px;line-height:1.6;color:#0B2239;"><strong>Have your detailed specs ready?</strong> Adding them now helps us quote faster — optional, the form takes about 5 minutes to fill in, and your details are already entered.</p>
-                ${button(escapeHtml(nextLink), "Add detailed specs")}`
+                ${button(escapeHtml(follow.link), "Add detailed specs")}`
              : button(siteUrl() + "/sample-report", "See a sample report")
          }`
       ),
-      text: `Thanks for contacting GlobalSource Africa.
-
-Your reference is ${ref}. We review every request and reply within 48 hours (GMT to GMT+3).
-${nextLink ? `
-Have your detailed specs ready? Adding them helps us quote faster (optional — the form takes about 5 minutes to fill in):
-${nextLink}
-` : ""}
-— GlobalSource Africa`,
+      text:
+        `Thanks for contacting GlobalSource Africa.\n\n` +
+        `Your reference is ${ref}. We review every request and reply within 48 hours (GMT to GMT+3).\n` +
+        (follow
+          ? `\nHave your detailed specs ready? Adding them helps us quote faster (optional — the form takes about 5 minutes to fill in):\n${follow.link}\n`
+          : "") +
+        `\n— GlobalSource Africa`,
     }),
   ]);
+  return team;
 }
 
 export async function submitInquiry(raw: InquiryInput): Promise<InquiryResult> {
-  try {
-    const parsed = schema.safeParse(raw);
-    if (!parsed.success) {
-      // Silently drop honeypot hits (pretend success to the bot).
-      if (parsed.error.issues.some((i) => i.path[0] === "fax")) {
-        return { ok: true, ref: "GSA-0000-0000" };
-      }
-      return { ok: false, error: parsed.error.issues[0]?.message ?? "Please check your details." };
+  const parsed = schema.safeParse(raw);
+  if (!parsed.success) {
+    // Silently drop honeypot hits (pretend success to the bot).
+    if (parsed.error.issues.some((i) => i.path[0] === "fax")) {
+      return { ok: true, ref: "GSA-0000-0000" };
     }
-    const input = parsed.data;
+    // Validation messages are written for the visitor ("Enter a valid email.").
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Please check your details." };
+  }
+  const input = parsed.data;
 
+  // 1. Save it. A failure here (missing env, paused project, outage) must not
+  //    lose the lead — fall through to email with an email-only reference.
+  let ref = "";
+  let dbError: string | null = null;
+  try {
     const db = createSupabaseAdminClient();
-    const ref = await nextRef(db);
+    ref = await nextRef(db);
     const { error } = await db.from("inquiries").insert({
       ref,
       service_type: input.service_type,
@@ -162,11 +183,25 @@ export async function submitInquiry(raw: InquiryInput): Promise<InquiryResult> {
       whatsapp: input.whatsapp || null,
       status: "new",
     });
-    if (error) return { ok: false, error: error.message };
-
-    await sendEmails(ref, input);
-    return { ok: true, ref };
+    if (error) dbError = error.message;
   } catch (e: any) {
-    return { ok: false, error: e.message ?? "Failed to submit. Please try again." };
+    dbError = e?.message ?? String(e);
   }
+  if (dbError) {
+    console.error("[inquiries] database write failed:", dbError);
+    ref = emailOnlyRef();
+  }
+
+  // 2. Tell the team (and the buyer). If it was saved, email is a bonus; if it
+  //    wasn't, the team email is the lead — success only if it went out.
+  let teamEmailed = false;
+  try {
+    teamEmailed = await sendEmails(ref, input, dbError);
+  } catch (e) {
+    console.error("[inquiries] email failed:", e);
+  }
+
+  if (!dbError || teamEmailed) return { ok: true, ref };
+  console.error("[inquiries] lead not saved AND not emailed:", { email: input.email, company: input.company });
+  return { ok: false, error: FRIENDLY_ERROR };
 }
